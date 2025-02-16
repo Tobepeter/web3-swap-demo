@@ -1,6 +1,6 @@
-import React from 'react';
+import React from 'react'
 
-const HomePage: React.FC = () => {
+export const HomePage: React.FC = () => {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">首页</h1>
@@ -12,7 +12,7 @@ const HomePage: React.FC = () => {
             <p>钱包地址: 未连接</p>
           </div>
         </div>
-        
+
         <div>
           <h2 className="text-xl font-semibold mb-2">代币余额</h2>
           {/* 代币余额显示区域 */}
@@ -27,7 +27,5 @@ const HomePage: React.FC = () => {
         </div>
       </div>
     </div>
-  );
-};
-
-export default HomePage; 
+  )
+}

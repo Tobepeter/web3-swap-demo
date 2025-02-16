@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import { HistoryPage } from './pages/history';
-import { HomePage } from './pages/home';
-import { LiquidityPage } from './pages/liquidity';
-import { TradingPage } from './pages/trading';
+import { HistoryPage } from '@/pages/history';
+import { HomePage } from '@/pages/home';
+import { LiquidityPage } from '@/pages/liquidity';
+import { TradingPage } from '@/pages/trading';
 
 const App: React.FC = () => {
   return (

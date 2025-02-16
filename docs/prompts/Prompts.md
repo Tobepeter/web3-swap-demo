@@ -81,3 +81,53 @@ Solidity 代码规范检查工具
 - TypeScript 类型生成
 - 测试工具
 - gas 消耗报告
+
+# npx hardhat init 需要到contract目录下吗？
+
+不需要专门创建 contracts 目录，npx hardhat init 会自动创建项目所需的目录结构，包括：
+contracts/: 存放智能合约文件
+scripts/: 存放部署脚本
+test/: 存放测试文件
+
+888    888                      888 888               888
+888    888                      888 888               888
+888    888                      888 888               888
+8888888888  8888b.  888d888 .d88888 88888b.   8888b.  888888
+888    888     "88b 888P"  d88" 888 888 "88b     "88b 888
+888    888 .d888888 888    888  888 888  888 .d888888 888
+888    888 888  888 888    Y88b 888 888  888 888  888 Y88b.
+888    888 "Y888888 888     "Y88888 888  888 "Y888888  "Y888
+
+👷 Welcome to Hardhat v2.22.18 👷‍
+
+我看到初始化过程中选择了 JavaScript 项目，但考虑到我们的前端使用的是 TypeScript，我建议我们改用 TypeScript 来编写合约相关的代码。让我们安装必要的 TypeScript 依赖：
+
+npm install --save-dev typescript ts-node @types/node @types/mocha
+
+# @contracts 简要介绍一下，这些文件都是什么
+
+1. contracts/ 目录：
+这是存放智能合约源代码的主要目录
+通常包含 .sol 文件（Solidity 智能合约）
+
+2. test/ 目录：
+用于存放智能合约的测试文件
+通常包含合约的单元测试和集成测试
+
+3. ignition/ 目录：
+Hardhat Ignition 部署脚本目录
+用于管理智能合约的部署配置和脚本
+
+4. 配置文件：
+hardhat.config.ts: Hardhat 的主配置文件，用于设置网络、编译器版本等
+tsconfig.json: TypeScript 配置文件，定义编译选项
+package.json 和 package-lock.json: Node.js 项目依赖管理文件
+
+5. 其他文件：
+.gitignore: Git 版本控制忽略文件配置
+README.md: 项目说明文档
+让我查看一下具体的配置内容，以便提供更详细的信息。
+
+项目使用 Hardhat 作为主要的智能合约开发框架（版本 2.22.18）
+使用 Solidity 0.8.28 版本进行合约开发
+集成了 hardhat-toolbox，这是一个包含了多个常用插件的工具集

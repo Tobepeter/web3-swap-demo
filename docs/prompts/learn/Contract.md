@@ -71,3 +71,79 @@ OpenZeppelin 是以太坊生态系统中最流行的智能合约开发库，它�
     - 帮助理解 ERC20 标准
     - 实践智能合约开发
 为将来开发真实项目打基础
+
+
+# Sepolia测试网ETH
+
+好的，让我帮你获取 Sepolia 测试网的 ETH。以下是几个可靠的 Sepolia 测试网 ETH 水龙头：
+
+1. Alchemy Sepolia 水龙头
+访问：https://sepoliafaucet.com/
+需要连接 Alchemy 账户
+每天可以领取 0.5 Sepolia ETH
+最稳定可靠
+
+2. Infura Sepolia 水龙头
+访问：https://www.infura.io/faucet/sepolia
+需要注册 Infura 账号
+每天可以领取 0.5 Sepolia ETH
+
+3. QuickNode Sepolia 水龙头
+访问：https://faucet.quicknode.com/ethereum/sepolia
+需要完成社交媒体任务
+每天可以领取 0.1 Sepolia ETH
+
+使用步骤：
+- 准备好你的钱包地址
+- 选择上面任意一个水龙头（建议使用 Alchemy 的）
+- 粘贴你的钱包地址
+- 完成验证后领取测试币
+
+# alchemy 不支持中国区么
+
+是的，Alchemy 确实不支持中国区。让我们换其他水龙头：
+
+1. Sepolia PoW Pool 水龙头
+访问：https://sepolia-faucet.pk910.de/
+直接输入钱包地址即可
+通过浏览器挖矿获得测试币
+不需要注册，直接使用
+
+2. Chainstack Sepolia 水龙头
+访问：https://faucet.chainstack.com/sepolia-faucet
+只需要完成验证码
+每24小时可以领取一次
+
+3. Sepolia Testnet Faucet
+访问：https://faucet-sepolia.rockx.com/
+直接输入地址领取
+每天每个地址可以领取一次
+
+# 为什么metamask切换网路地址可以保证不变
+
+1. 用户友好性
+不需要记住多个地址
+同一个地址可以在所有兼容网络使用
+就像一个银行卡号可以在不同银行网点使用
+
+2. 技术兼容性
+所有基于以太坊技术的网络使用相同的地址格式
+使用相同的签名算法
+私钥可以在所有网络上证明你的身份
+
+以太坊地址的唯一性是通过密码学来保证的，让我解释这个过程：
+
+私钥 (256位随机数)
+    ↓ (椭圆曲线加密SECP256K1)
+公钥 (512位)
+    ↓ (Keccak-256哈希)
+地址 (160位，40个十六进制字符)
+
+私钥空间巨大到实际上不可能发生碰撞
+即使全人类每秒生成一百万个地址，运行到宇宙毁灭也不会重复
+这就是为什么我们说它是"实际唯一"的，虽然理论上可能重复，但概率小到可以忽略不计。
+
+私钥空间
+2^256 种可能性
+约等于 115,792,089,237,316,195,423,570,985,008,687,907,853,269,984,665,640,564,039,457,584,007,913,129,639,936
+这个数字比可观测宇宙中的原子总数还要大

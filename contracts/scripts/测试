@@ -1,0 +1,50 @@
+铸造测试代币
+
+先执行
+```bash
+# 1. 确保一个终端运行着本地节点
+npx hardhat node
+
+# 2. 新开一个终端，进入 contracts 目录
+cd contracts
+
+# 3. 运行 Hardhat console
+npx hardhat console --network localhost
+```
+
+在 console 中依次执行：
+```javascript
+// 1. 获取合约工厂
+const MockERC20 = await ethers.getContractFactory("MockERC20")
+const MockUSDC = await ethers.getContractFactory("MockUSDC")
+
+// 2. 连接到已部署的合约
+const mockERC20 = await MockERC20.attach("0x5FbDB2315678afecb367f032d93F642f64180aa3")
+const mockUSDC = await MockUSDC.attach("0xe7f1725E7734CE288F8367e1Bb143E90bb3f0512")
+
+// 3. 获取测试账户
+const [owner, user1] = await ethers.getSigners()
+
+// 4. 给 owner 铸造代币
+await mockERC20.mint(owner.address, ethers.parseEther("1000"))
+await mockUSDC.mint(owner.address, ethers.parseUnits("1000", 6))
+
+// 5. 给 user1 铸造代币
+await mockERC20.mint(user1.address, ethers.parseEther("1000"))
+await mockUSDC.mint(user1.address, ethers.parseUnits("1000", 6))
+
+// 6. 查看 owner 余额
+console.log("Owner MockERC20 余额:", ethers.formatEther(await mockERC20.balanceOf(owner.address)))
+console.log("Owner MockUSDC 余额:", ethers.formatUnits(await mockUSDC.balanceOf(owner.address), 6))
+
+// 7. 查看 user1 余额
+console.log("User1 MockERC20 余额:", ethers.formatEther(await mockERC20.balanceOf(user1.address)))
+console.log("User1 MockUSDC 余额:", ethers.formatUnits(await mockUSDC.balanceOf(user1.address), 6))
+```
+
+说明：
+- owner 账户地址：0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+- user1 账户地址：0x70997970C51812dc3A010C7d01b50e0d17dc79C8
+- MockERC20 合约地址：0x5FbDB2315678afecb367f032d93F642f64180aa3
+- MockUSDC 合约地址：0xe7f1725E7734CE288F8367e1Bb143E90bb3f0512
+- MockUniswapV2Pair 合约地址：0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0

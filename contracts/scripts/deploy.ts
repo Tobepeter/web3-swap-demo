@@ -1,0 +1,67 @@
+import { ethers, run } from 'hardhat'
+
+async function main() {
+  console.log('开始部署合约...')
+
+  // 部署 MockERC20
+  const MockERC20 = await ethers.getContractFactory('MockERC20')
+  const mockERC20 = await MockERC20.deploy()
+  await mockERC20.waitForDeployment()
+  console.log(`MockERC20 已部署到: ${await mockERC20.getAddress()}`)
+
+  // 部署 MockUSDC
+  const MockUSDC = await ethers.getContractFactory('MockUSDC')
+  const mockUSDC = await MockUSDC.deploy()
+  await mockUSDC.waitForDeployment()
+  console.log(`MockUSDC 已部署到: ${await mockUSDC.getAddress()}`)
+
+  // 部署 MockUniswapV2Pair
+  const MockUniswapV2Pair = await ethers.getContractFactory('MockUniswapV2Pair')
+  const mockUniswapV2Pair = await MockUniswapV2Pair.deploy(await mockERC20.getAddress(), await mockUSDC.getAddress())
+  await mockUniswapV2Pair.waitForDeployment()
+  console.log(`MockUniswapV2Pair 已部署到: ${await mockUniswapV2Pair.getAddress()}`)
+
+  console.log('\n合约部署完成！')
+  console.log('-------------------')
+  console.log('部署地址汇总：')
+  console.log(`MockERC20: ${await mockERC20.getAddress()}`)
+  console.log(`MockUSDC: ${await mockUSDC.getAddress()}`)
+  console.log(`MockUniswapV2Pair: ${await mockUniswapV2Pair.getAddress()}`)
+
+  // 等待区块确认，以便 etherscan 验证
+  console.log('\n等待区块确认...')
+  await mockERC20.deploymentTransaction()?.wait(5)
+  await mockUSDC.deploymentTransaction()?.wait(5)
+  await mockUniswapV2Pair.deploymentTransaction()?.wait(5)
+
+  // 验证合约
+  // 这个只处理合约验证过程中的错误，验证失败不会导致脚本终止。
+  console.log('\n开始验证合约...')
+  try {
+    await run('verify:verify', {
+      address: await mockERC20.getAddress(),
+      constructorArguments: [],
+    })
+
+    await run('verify:verify', {
+      address: await mockUSDC.getAddress(),
+      constructorArguments: [],
+    })
+
+    await run('verify:verify', {
+      address: await mockUniswapV2Pair.getAddress(),
+      constructorArguments: [await mockERC20.getAddress(), await mockUSDC.getAddress()],
+    })
+
+    console.log('合约验证完成！')
+  } catch (error) {
+    console.error('合约验证失败:', error)
+  }
+}
+
+main()
+  .then(() => process.exit(0))
+  .catch(error => {
+    console.error(error)
+    process.exit(1)
+  })

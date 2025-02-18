@@ -93,6 +93,16 @@ OpenZeppelin 是以太坊生态系统中最流行的智能合约开发库，它�
 需要完成社交媒体任务
 每天可以领取 0.1 Sepolia ETH
 
+对于 Sepolia 测试网络,常见的 RPC 提供商包括:
+- Alchemy
+- Infura
+- QuickNode
+- 公共端点
+
+## 撸毛指南
+
+https://www.binance.com/zh-CN/square/post/14998165664721
+
 使用步骤：
 - 准备好你的钱包地址
 - 选择上面任意一个水龙头（建议使用 Alchemy 的）
@@ -173,3 +183,39 @@ const contract = await factory.deploy()
 ## 对比 web3.js
 
 最早的以太坊 JavaScript 库，API 设计相对老旧，主要用于浏览器环境
+
+# etherscan
+
+Etherscan 就像是区块链的"谷歌"
+它把区块链上的原始数据转换成人类可读的格式
+实时同步和索引区块链上的所有信息
+
+## 不同网络的版本
+
+主网：etherscan.io
+Sepolia测试网：sepolia.etherscan.io
+Goerli测试网：goerli.etherscan.io
+
+# hardhat 的网络配置
+
+在 Hardhat 中，网络配置是一个很重要的概念，主要有以下几种常见的网络类型：
+
+1. hardhat 网络（默认）：
+    - 这是当你不指定 --network 参数时使用的默认网络
+    - 它是一个内置的本地以太坊网络模拟器
+    - 每次运行任务时都会创建一个新的临时网络实例
+    - 运行完成后会自动销毁
+    - 适合用于快速测试和开发
+
+2. localhost 网络：
+    - 这是通过 hardhat node 命令启动的持久本地网络
+    - 网络状态会持续存在，直到你手动关闭节点
+    - 交易历史会被保留
+    - 更接近真实区块链网络的行为
+    - 适合本地开发和调试
+
+3. 其他网络：
+    - 这是通过 hardhat network 命令启动的网络
+    - 它是一个内置的本地以太坊网络模拟器
+    - 每次运行任务时都会创建一个新的临时网络实例
+    - 运行完成后会自动销毁

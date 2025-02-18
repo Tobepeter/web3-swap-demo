@@ -1,26 +1,38 @@
 import { ethers, network, run } from 'hardhat'
 
+async function deployMockERC20() {
+  const MockERC20 = await ethers.getContractFactory('MockERC20')
+  const mockERC20 = await MockERC20.deploy()
+  await mockERC20.waitForDeployment()
+  return mockERC20
+}
+
+async function deployMockUSDC() {
+  const MockUSDC = await ethers.getContractFactory('MockUSDC')
+  const mockUSDC = await MockUSDC.deploy()
+  await mockUSDC.waitForDeployment()
+  return mockUSDC
+}
+
+async function deployMockUniswapV2Pair(mockERC20: any, mockUSDC: any) {
+  const MockUniswapV2Pair = await ethers.getContractFactory('MockUniswapV2Pair')
+  const mockUniswapV2Pair = await MockUniswapV2Pair.deploy(await mockERC20.getAddress(), await mockUSDC.getAddress())
+  await mockUniswapV2Pair.waitForDeployment()
+  return mockUniswapV2Pair
+}
+
 async function main() {
   console.log('开始部署合约...')
   console.log(`当前网络: ${network.name}`)
 
   // 部署 MockERC20
-  const MockERC20 = await ethers.getContractFactory('MockERC20')
-  const mockERC20 = await MockERC20.deploy()
-  await mockERC20.waitForDeployment()
-  console.log(`MockERC20 已部署到: ${await mockERC20.getAddress()}`)
+  const mockERC20 = await deployMockERC20()
 
   // 部署 MockUSDC
-  const MockUSDC = await ethers.getContractFactory('MockUSDC')
-  const mockUSDC = await MockUSDC.deploy()
-  await mockUSDC.waitForDeployment()
-  console.log(`MockUSDC 已部署到: ${await mockUSDC.getAddress()}`)
+  const mockUSDC = await deployMockUSDC()
 
   // 部署 MockUniswapV2Pair
-  const MockUniswapV2Pair = await ethers.getContractFactory('MockUniswapV2Pair')
-  const mockUniswapV2Pair = await MockUniswapV2Pair.deploy(await mockERC20.getAddress(), await mockUSDC.getAddress())
-  await mockUniswapV2Pair.waitForDeployment()
-  console.log(`MockUniswapV2Pair 已部署到: ${await mockUniswapV2Pair.getAddress()}`)
+  const mockUniswapV2Pair = await deployMockUniswapV2Pair(mockERC20, mockUSDC)
 
   console.log('\n合约部署完成！')
   console.log('-------------------')

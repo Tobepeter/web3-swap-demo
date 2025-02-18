@@ -147,3 +147,29 @@ OpenZeppelin 是以太坊生态系统中最流行的智能合约开发库，它�
 2^256 种可能性
 约等于 115,792,089,237,316,195,423,570,985,008,687,907,853,269,984,665,640,564,039,457,584,007,913,129,639,936
 这个数字比可观测宇宙中的原子总数还要大
+
+# ethers.js 是做什么的
+
+```javascript
+// 前端 DApp 开发
+const provider = new ethers.providers.Web3Provider(window.ethereum)
+const signer = provider.getSigner()
+const contract = new ethers.Contract(address, abi, signer)
+
+// 后端服务开发
+const provider = new ethers.providers.JsonRpcProvider(RPC_URL)
+const wallet = new ethers.Wallet(privateKey, provider)
+
+// 合约部署脚本
+const factory = new ethers.ContractFactory(abi, bytecode, signer)
+const contract = await factory.deploy()
+```
+
+- 前端 DApp 开发
+- 后端服务开发
+- 合约部署和测试
+- 钱包应用开发
+
+## 对比 web3.js
+
+最早的以太坊 JavaScript 库，API 设计相对老旧，主要用于浏览器环境

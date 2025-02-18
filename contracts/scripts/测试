@@ -19,6 +19,7 @@ const MockERC20 = await ethers.getContractFactory("MockERC20")
 const MockUSDC = await ethers.getContractFactory("MockUSDC")
 
 // 2. 连接到已部署的合约
+// 这些地址是 deploy.ts 本地部署来的
 const mockERC20 = await MockERC20.attach("0x5FbDB2315678afecb367f032d93F642f64180aa3")
 const mockUSDC = await MockUSDC.attach("0xe7f1725E7734CE288F8367e1Bb143E90bb3f0512")
 

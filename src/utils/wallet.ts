@@ -1,12 +1,13 @@
 import { ethers } from 'ethers'
 
-class WalletUtils {
-  private provider: ethers.providers.Web3Provider | null = null
-  private signer: ethers.Signer | null = null
+class Wallet {
+  private provider: ethers.providers.Web3Provider // 提供商
+  private signer: ethers.Signer // 签名者
 
-  /**
-   * 初始化 provider
-   */
+  constructor() {
+    this.initProvider()
+  }
+
   private initProvider() {
     if (!window.ethereum) {
       throw new Error('请安装 MetaMask!')
@@ -18,44 +19,35 @@ class WalletUtils {
   /**
    * 连接钱包
    * @returns 钱包地址
+   *
+   * 一个 MetaMask 钱包可以同时管理多个账户地址
+   * 这是 EIP-1102 规范的一部分，定义了 Web3 提供商应该如何请求用户授权
+   * accounts[0] 代表当前选中的主账户
    */
   async connectWallet(): Promise<string> {
-    if (!this.provider) {
-      this.initProvider()
-    }
-
-    try {
-      const accounts = await window.ethereum.request({
-        method: 'eth_requestAccounts',
-      })
-      return accounts[0]
-    } catch (error) {
-      console.error('连接钱包失败:', error)
-      throw error
-    }
+    const accounts = await window.ethereum.request({
+      method: 'eth_requestAccounts',
+    })
+    return accounts[0]
   }
 
   /**
    * 获取当前网络 ID
+   * @returns 当前网络 ID
    */
   async getNetworkId(): Promise<number> {
-    if (!this.provider) {
-      this.initProvider()
-    }
-    const network = await this.provider!.getNetwork()
+    const network = await this.provider.getNetwork()
     return network.chainId
   }
 
   /**
    * 获取钱包余额
    * @param address 钱包地址
+   * @returns 余额（转换为 ETH 单位）
    */
   async getBalance(address: string): Promise<string> {
-    if (!this.provider) {
-      this.initProvider()
-    }
-    const balance = await this.provider!.getBalance(address)
-    return ethers.utils.formatEther(balance) // 转换为 ETH 单位
+    const balance = await this.provider.getBalance(address)
+    return ethers.utils.formatEther(balance)
   }
 
   /**
@@ -64,13 +56,8 @@ class WalletUtils {
    * @param amount ETH 数量
    */
   async sendTransaction(to: string, amount: string) {
-    if (!this.signer) {
-      this.initProvider()
-    }
-    const tx = await this.signer!.sendTransaction({
-      to,
-      value: ethers.utils.parseEther(amount),
-    })
+    const value = ethers.utils.parseEther(amount)
+    const tx = await this.signer.sendTransaction({ to, value })
     return tx
   }
 
@@ -95,28 +82,34 @@ class WalletUtils {
   /**
    * 添加代币到 MetaMask
    * @param tokenAddress 代币合约地址
-   * @param symbol 代币符号
+   * @param symbol 代币符号 (如 USDT、LINK 等)
    * @param decimals 代币精度
    */
   async addToken(tokenAddress: string, symbol: string, decimals: number) {
-    try {
-      await window.ethereum.request({
-        method: 'wallet_watchAsset',
-        params: [
-          {
-            type: 'ERC20',
-            options: {
-              address: tokenAddress,
-              symbol,
-              decimals,
-            },
+    await window.ethereum.request({
+      method: 'wallet_watchAsset',
+      params: [
+        {
+          type: 'ERC20',
+          options: {
+            address: tokenAddress,
+            symbol,
+            decimals,
           },
-        ],
-      })
-    } catch (error) {
-      console.error('添加代币失败:', error)
-      throw error
-    }
+        },
+      ],
+    })
+  }
+
+  /**
+   * 获取代币精度
+   * @param tokenAddress 代币合约地址
+   * @returns 代币精度
+   */
+  async getTokenDecimals(tokenAddress: string): Promise<number> {
+    const erc20Abi = ['function decimals() view returns (uint8)']
+    const contract = new ethers.Contract(tokenAddress, erc20Abi, this.provider)
+    return contract.decimals()
   }
 
   /**
@@ -125,9 +118,6 @@ class WalletUtils {
    * @param callback 回调函数
    */
   on(eventName: string, callback: (...args: any[]) => void) {
-    if (!window.ethereum) {
-      throw new Error('请安装 MetaMask!')
-    }
     window.ethereum.on(eventName, callback)
   }
 
@@ -137,11 +127,8 @@ class WalletUtils {
    * @param callback 回调函数
    */
   removeListener(eventName: string, callback: (...args: any[]) => void) {
-    if (!window.ethereum) {
-      throw new Error('请安装 MetaMask!')
-    }
     window.ethereum.removeListener(eventName, callback)
   }
 }
 
-export const walletUtils = new WalletUtils()
+export const wallet = new Wallet()

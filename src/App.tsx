@@ -4,7 +4,7 @@ import { LiquidityPage } from '@/pages/liquidity'
 import { TradingPage } from '@/pages/trading'
 import React, { useEffect, useState } from 'react'
 import { Link, Route, BrowserRouter as Router, Routes } from 'react-router-dom'
-import { walletUtils } from './utils/wallet'
+import { wallet } from './utils/wallet'
 
 const App: React.FC = () => {
   const [account, setAccount] = useState<string>('')
@@ -16,17 +16,17 @@ const App: React.FC = () => {
       setAccount(accounts[0])
     }
 
-    walletUtils.on('accountsChanged', handleAccountsChanged)
+    wallet.on('accountsChanged', handleAccountsChanged)
 
     return () => {
-      walletUtils.removeListener('accountsChanged', handleAccountsChanged)
+      wallet.removeListener('accountsChanged', handleAccountsChanged)
     }
   }, [])
 
   const connectWallet = async () => {
     try {
       setIsConnecting(true)
-      const address = await walletUtils.connectWallet()
+      const address = await wallet.connectWallet()
       setAccount(address)
       console.log('连接钱包成功:', address)
     } catch (error) {

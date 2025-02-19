@@ -1,6 +1,9 @@
+import { store } from '@/store/store'
 import React from 'react'
 
 export const HomePage: React.FC = () => {
+  const { address, chainId, MockERC20Balance, MOCK_USDCBalance, isConnected } = store()
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">首页</h1>
@@ -9,7 +12,7 @@ export const HomePage: React.FC = () => {
           <h2 className="text-xl font-semibold mb-2">钱包信息</h2>
           {/* 钱包地址显示区域 */}
           <div className="p-4 bg-gray-100 rounded">
-            <p>钱包地址: 未连接</p>
+            <p>钱包地址: {address}</p>
           </div>
         </div>
 

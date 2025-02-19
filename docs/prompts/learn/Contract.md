@@ -1,4 +1,3 @@
-
 # 小白
 
 Q：
@@ -24,76 +23,82 @@ OpenZeppelin 提供了经过审计和广泛使用的 ERC20 实现
 OpenZeppelin 是一个非常重要的智能合约开发库，让我为你详细解释：
 
 OpenZeppelin 是以太坊生态系统中最流行的智能合约开发库，它提供了：
+
 1. 安全性保障：
-    - 所有代码都经过专业审计
-    - 被业界广泛使用和验证
-    - 持续维护和更新
+   - 所有代码都经过专业审计
+   - 被业界广泛使用和验证
+   - 持续维护和更新
 2. 标准实现：
-    - 提供了所有主要 ERC 标准的标准实现
-    - 包括 ERC20、ERC721（NFT）、ERC1155 等
-    - 确保符合以太坊标准
+   - 提供了所有主要 ERC 标准的标准实现
+   - 包括 ERC20、ERC721（NFT）、ERC1155 等
+   - 确保符合以太坊标准
 3. 常用功能：
-    - 访问控制（如 Ownable）
-    - 安全数学运算
-    - 代币锁定
-    - 多重签名钱包等
+   - 访问控制（如 Ownable）
+   - 安全数学运算
+   - 代币锁定
+   - 多重签名钱包等
 
 # 为什么需要自己定义代币，没有测试网络有现成的吗？
 
 ## 测试网络的代币情况
+
 1. ETH
-    - 所有以太坊测试网络（如 Sepolia, Goerli）都有测试用 ETH
-    - 可以通过水龙头（Faucet）免费获取
-    - 主要用于支付 gas 费用
+   - 所有以太坊测试网络（如 Sepolia, Goerli）都有测试用 ETH
+   - 可以通过水龙头（Faucet）免费获取
+   - 主要用于支付 gas 费用
 2. 常见稳定币（如 USDC）
-    - 一些主流代币在测试网确实有官方版本
-    - 但是：
-        - 不是所有测试网都有
-        - 获取这些代币可能不太方便
-        - 不能保证稳定可用
+   - 一些主流代币在测试网确实有官方版本
+   - 但是：
+     - 不是所有测试网都有
+     - 获取这些代币可能不太方便
+     - 不能保证稳定可用
 
 ## 为什么要自己部署测试代币？
+
 1. 控制性
-    - 可以自由铸造代币进行测试
-    - 可以完全控制代币的行为
-    - 方便调试和测试各种场景
+   - 可以自由铸造代币进行测试
+   - 可以完全控制代币的行为
+   - 方便调试和测试各种场景
 2. 可靠性
-    - 不依赖第三方服务
-    - 测试环境完全可控
-    - 避免测试网上的代币可能存在的问题（如限制、延迟等）
+   - 不依赖第三方服务
+   - 测试环境完全可控
+   - 避免测试网上的代币可能存在的问题（如限制、延迟等）
 
 ## 面试任务要求
+
     - 查看任务描述中明确要求：
         - Use mock ERC20 contracts (`MockERC20`, `MOCK_USDC`) and a simple UniswapV2 pair contract.
     - 这是考察点之一，要看你是否能够正确实现 ERC20 合约
 
 ## 学习目的
+
     - 帮助理解 ERC20 标准
     - 实践智能合约开发
-为将来开发真实项目打基础
 
+为将来开发真实项目打基础
 
 # Sepolia测试网ETH
 
 好的，让我帮你获取 Sepolia 测试网的 ETH。以下是几个可靠的 Sepolia 测试网 ETH 水龙头：
 
 1. Alchemy Sepolia 水龙头
-访问：https://sepoliafaucet.com/
-需要连接 Alchemy 账户
-每天可以领取 0.5 Sepolia ETH
-最稳定可靠
+   访问：https://sepoliafaucet.com/
+   需要连接 Alchemy 账户
+   每天可以领取 0.5 Sepolia ETH
+   最稳定可靠
 
 2. Infura Sepolia 水龙头
-访问：https://www.infura.io/faucet/sepolia
-需要注册 Infura 账号
-每天可以领取 0.5 Sepolia ETH
+   访问：https://www.infura.io/faucet/sepolia
+   需要注册 Infura 账号
+   每天可以领取 0.5 Sepolia ETH
 
 3. QuickNode Sepolia 水龙头
-访问：https://faucet.quicknode.com/ethereum/sepolia
-需要完成社交媒体任务
-每天可以领取 0.1 Sepolia ETH
+   访问：https://faucet.quicknode.com/ethereum/sepolia
+   需要完成社交媒体任务
+   每天可以领取 0.1 Sepolia ETH
 
 对于 Sepolia 测试网络,常见的 RPC 提供商包括:
+
 - Alchemy
 - Infura
 - QuickNode
@@ -103,7 +108,10 @@ OpenZeppelin 是以太坊生态系统中最流行的智能合约开发库，它�
 
 https://www.binance.com/zh-CN/square/post/14998165664721
 
+http://cloud.google.com/application/web3/faucet/ethereum/sepolia
+
 使用步骤：
+
 - 准备好你的钱包地址
 - 选择上面任意一个水龙头（建议使用 Alchemy 的）
 - 粘贴你的钱包地址
@@ -114,39 +122,39 @@ https://www.binance.com/zh-CN/square/post/14998165664721
 是的，Alchemy 确实不支持中国区。让我们换其他水龙头：
 
 1. Sepolia PoW Pool 水龙头
-访问：https://sepolia-faucet.pk910.de/
-直接输入钱包地址即可
-通过浏览器挖矿获得测试币
-不需要注册，直接使用
+   访问：https://sepolia-faucet.pk910.de/
+   直接输入钱包地址即可
+   通过浏览器挖矿获得测试币
+   不需要注册，直接使用
 
 2. Chainstack Sepolia 水龙头
-访问：https://faucet.chainstack.com/sepolia-faucet
-只需要完成验证码
-每24小时可以领取一次
+   访问：https://faucet.chainstack.com/sepolia-faucet
+   只需要完成验证码
+   每24小时可以领取一次
 
 3. Sepolia Testnet Faucet
-访问：https://faucet-sepolia.rockx.com/
-直接输入地址领取
-每天每个地址可以领取一次
+   访问：https://faucet-sepolia.rockx.com/
+   直接输入地址领取
+   每天每个地址可以领取一次
 
 # 为什么metamask切换网路地址可以保证不变
 
 1. 用户友好性
-不需要记住多个地址
-同一个地址可以在所有兼容网络使用
-就像一个银行卡号可以在不同银行网点使用
+   不需要记住多个地址
+   同一个地址可以在所有兼容网络使用
+   就像一个银行卡号可以在不同银行网点使用
 
 2. 技术兼容性
-所有基于以太坊技术的网络使用相同的地址格式
-使用相同的签名算法
-私钥可以在所有网络上证明你的身份
+   所有基于以太坊技术的网络使用相同的地址格式
+   使用相同的签名算法
+   私钥可以在所有网络上证明你的身份
 
 以太坊地址的唯一性是通过密码学来保证的，让我解释这个过程：
 
 私钥 (256位随机数)
-    ↓ (椭圆曲线加密SECP256K1)
+↓ (椭圆曲线加密SECP256K1)
 公钥 (512位)
-    ↓ (Keccak-256哈希)
+↓ (Keccak-256哈希)
 地址 (160位，40个十六进制字符)
 
 私钥空间巨大到实际上不可能发生碰撞
@@ -201,21 +209,23 @@ Goerli测试网：goerli.etherscan.io
 在 Hardhat 中，网络配置是一个很重要的概念，主要有以下几种常见的网络类型：
 
 1. hardhat 网络（默认）：
-    - 这是当你不指定 --network 参数时使用的默认网络
-    - 它是一个内置的本地以太坊网络模拟器
-    - 每次运行任务时都会创建一个新的临时网络实例
-    - 运行完成后会自动销毁
-    - 适合用于快速测试和开发
+
+   - 这是当你不指定 --network 参数时使用的默认网络
+   - 它是一个内置的本地以太坊网络模拟器
+   - 每次运行任务时都会创建一个新的临时网络实例
+   - 运行完成后会自动销毁
+   - 适合用于快速测试和开发
 
 2. localhost 网络：
-    - 这是通过 hardhat node 命令启动的持久本地网络
-    - 网络状态会持续存在，直到你手动关闭节点
-    - 交易历史会被保留
-    - 更接近真实区块链网络的行为
-    - 适合本地开发和调试
+
+   - 这是通过 hardhat node 命令启动的持久本地网络
+   - 网络状态会持续存在，直到你手动关闭节点
+   - 交易历史会被保留
+   - 更接近真实区块链网络的行为
+   - 适合本地开发和调试
 
 3. 其他网络：
-    - 这是通过 hardhat network 命令启动的网络
-    - 它是一个内置的本地以太坊网络模拟器
-    - 每次运行任务时都会创建一个新的临时网络实例
-    - 运行完成后会自动销毁
+   - 这是通过 hardhat network 命令启动的网络
+   - 它是一个内置的本地以太坊网络模拟器
+   - 每次运行任务时都会创建一个新的临时网络实例
+   - 运行完成后会自动销毁

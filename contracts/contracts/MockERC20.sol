@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract MockERC20 is ERC20, Ownable {
-    constructor() ERC20("Mock Token", "MTK") Ownable(msg.sender) {
+    constructor() ERC20("MockERC20 Token", "MockERC20") Ownable(msg.sender) {
         // 初始铸造 1000000 个代币（18位小数）
         _mint(msg.sender, 1000000 * 10 ** decimals());
     }

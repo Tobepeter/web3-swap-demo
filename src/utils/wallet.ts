@@ -1,19 +1,34 @@
-import { ethers } from 'ethers'
+import type { Address, Chain, PublicClient, WalletClient } from 'viem'
+import { createPublicClient, createWalletClient, custom, formatEther, http } from 'viem'
+import { sepolia } from 'viem/chains'
 
 class Wallet {
-  private provider: ethers.providers.Web3Provider // 提供商
-  private signer: ethers.Signer // 签名者
+  private client: PublicClient // 公共客户端，用于读取链上数据
+  private walletClient: WalletClient // 钱包客户端，用于发送交易
+
+  chain: Chain
 
   constructor() {
-    this.initProvider()
+    this.initClient()
   }
 
-  private initProvider() {
+  private initClient() {
     if (!window.ethereum) {
       throw new Error('请安装 MetaMask!')
     }
-    this.provider = new ethers.providers.Web3Provider(window.ethereum)
-    this.signer = this.provider.getSigner()
+
+    this.chain = sepolia
+
+    // TODO: 类型不兼容，不好排查
+    this.client = createPublicClient({
+      chain: this.chain,
+      transport: http(),
+    }) as any
+
+    this.walletClient = createWalletClient({
+      chain: this.chain,
+      transport: custom(window.ethereum),
+    })
   }
 
   /**
@@ -24,7 +39,7 @@ class Wallet {
    * 这是 EIP-1102 规范的一部分，定义了 Web3 提供商应该如何请求用户授权
    * accounts[0] 代表当前选中的主账户
    */
-  async connectWallet(): Promise<string> {
+  async connectWallet(): Promise<Address> {
     const accounts = await window.ethereum.request({
       method: 'eth_requestAccounts',
     })
@@ -36,18 +51,25 @@ class Wallet {
    * @returns 当前网络 ID
    */
   async getNetworkId(): Promise<number> {
-    const network = await this.provider.getNetwork()
-    return network.chainId
+    const chainId = await this.client.transport.getChainId()
+    return chainId
   }
 
   /**
    * 获取钱包余额
    * @param address 钱包地址
-   * @returns 余额（转换为 ETH 单位）
    */
-  async getBalance(address: string): Promise<string> {
-    const balance = await this.provider.getBalance(address)
-    return ethers.utils.formatEther(balance)
+  async getBalance(address: Address) {
+    return this.client.getBalance({ address })
+  }
+
+  /**
+   * 获取钱包余额（以 ETH 为单位）
+   * @param address 钱包地址
+   */
+  async getBalanceETH(address: Address): Promise<string> {
+    const balance = await this.getBalance(address)
+    return formatEther(balance)
   }
 
   /**
@@ -55,10 +77,15 @@ class Wallet {
    * @param to 接收地址
    * @param amount ETH 数量
    */
-  async sendTransaction(to: string, amount: string) {
-    const value = ethers.utils.parseEther(amount)
-    const tx = await this.signer.sendTransaction({ to, value })
-    return tx
+  async sendTransaction(to: Address, amount: bigint) {
+    const [address] = await this.walletClient.getAddresses()
+    return this.walletClient.sendTransaction({
+      account: address,
+      to,
+      value: amount,
+      kzg: undefined,
+      chain: this.chain,
+    })
   }
 
   /**
@@ -66,6 +93,7 @@ class Wallet {
    * @param chainId 目标链 ID
    */
   async switchNetwork(chainId: number) {
+    // TODO: 和本地变量同步起来
     try {
       await window.ethereum.request({
         method: 'wallet_switchEthereumChain',
@@ -103,13 +131,17 @@ class Wallet {
 
   /**
    * 获取代币精度
-   * @param tokenAddress 代币合约地址
+   * @param address 代币合约地址
    * @returns 代币精度
    */
-  async getTokenDecimals(tokenAddress: string): Promise<number> {
-    const erc20Abi = ['function decimals() view returns (uint8)']
-    const contract = new ethers.Contract(tokenAddress, erc20Abi, this.provider)
-    return contract.decimals()
+  async getTokenDecimals(address: Address): Promise<number> {
+    const erc20Abi = ['function decimals(address) view returns (uint8)']
+    const decimals = (await this.client.readContract({
+      address: address,
+      abi: erc20Abi,
+      functionName: 'decimals',
+    })) as number
+    return decimals
   }
 
   /**

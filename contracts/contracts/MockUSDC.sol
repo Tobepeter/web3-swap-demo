@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract MockUSDC is ERC20, Ownable {
-    constructor() ERC20("Mock USDC", "mUSDC") Ownable(msg.sender) {
+    constructor() ERC20("MockUSDC Token", "MockUSDC") Ownable(msg.sender) {
         // 初始铸造 1000000 个代币（6位小数）
         _mint(msg.sender, 1000000 * 10 ** decimals());
     }

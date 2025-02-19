@@ -2,18 +2,20 @@ import { HistoryPage } from '@/pages/history'
 import { HomePage } from '@/pages/home'
 import { LiquidityPage } from '@/pages/liquidity'
 import { TradingPage } from '@/pages/trading'
+import { store } from '@/store/store'
 import React, { useEffect, useState } from 'react'
 import { Link, Route, BrowserRouter as Router, Routes } from 'react-router-dom'
+import { Address } from 'viem'
+import { services } from './services/services'
 import { wallet } from './utils/wallet'
 
 const App: React.FC = () => {
-  const [account, setAccount] = useState<string>('')
   const [isConnecting, setIsConnecting] = useState(false)
 
   useEffect(() => {
     // 监听账户变化
     const handleAccountsChanged = (accounts: string[]) => {
-      setAccount(accounts[0])
+      store.setState({ address: accounts[0] as Address })
     }
 
     wallet.on('accountsChanged', handleAccountsChanged)
@@ -24,17 +26,30 @@ const App: React.FC = () => {
   }, [])
 
   const connectWallet = async () => {
+    let address: Address
     try {
       setIsConnecting(true)
-      const address = await wallet.connectWallet()
-      setAccount(address)
+      address = await wallet.connectWallet()
+      store.setState({ address: address as Address })
       console.log('连接钱包成功:', address)
     } catch (error) {
       console.error('连接钱包失败:', error)
-      alert('连接钱包失败，请重试')
     } finally {
       setIsConnecting(false)
     }
+
+    // 如果连接成功，则获取余额
+    if (address) {
+      await services.getMockERC20Balance()
+      await services.getMockUSDCBalance()
+    }
+  }
+
+  let connectBtnText = '未连接'
+  if (isConnecting) {
+    connectBtnText = '连接中...'
+  } else if (store.getState().isConnected) {
+    connectBtnText = '已连接'
   }
 
   return (
@@ -62,7 +77,7 @@ const App: React.FC = () => {
               {/* 钱包连接按钮 */}
               <div className="flex items-center">
                 <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:bg-blue-400" onClick={connectWallet} disabled={isConnecting}>
-                  {isConnecting ? '连接中...' : account ? `${account.slice(0, 6)}...${account.slice(-4)}` : '连接钱包'}
+                  {connectBtnText}
                 </button>
               </div>
             </div>

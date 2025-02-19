@@ -1,10 +1,11 @@
 import { store } from '@/store/store'
+import { format_Mock_ERC20_Balance, format_MOCK_USDC_Balance, isEmptyAddress } from '@/utils/common'
 import { PlusOutlined } from '@ant-design/icons'
 import { Button, InputNumber, Modal } from 'antd'
 import React, { useState } from 'react'
 
 export const HomePage: React.FC = () => {
-  const { address, chainId, MockERC20Balance, MOCK_USDCBalance, isConnected } = store()
+  const { address, MockERC20_Balance, MockUSDC_Balance } = store()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedToken, setSelectedToken] = useState<'MockERC20' | 'MOCK_USDC'>('MockERC20')
   const [amount, setAmount] = useState<number>(100)
@@ -20,6 +21,14 @@ export const HomePage: React.FC = () => {
     setIsModalOpen(false)
   }
 
+  const addressStr = isEmptyAddress(address) ? '-' : address
+
+  const isConnected = !isEmptyAddress(address)
+  const MockERC20BalanceStr = isConnected ? format_Mock_ERC20_Balance(MockERC20_Balance) : '-'
+  const MockUSDCBalanceStr = isConnected ? format_MOCK_USDC_Balance(MockUSDC_Balance) : '-'
+
+  console.log('isConnected', isConnected)
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">首页</h1>
@@ -28,7 +37,7 @@ export const HomePage: React.FC = () => {
           <h2 className="text-xl font-semibold mb-2">钱包信息</h2>
           {/* 钱包地址显示区域 */}
           <div className="p-4 bg-gray-100 rounded">
-            <p>钱包地址: {address}</p>
+            <p>钱包地址: {addressStr}</p>
           </div>
         </div>
 
@@ -37,11 +46,11 @@ export const HomePage: React.FC = () => {
           {/* 代币余额显示区域 */}
           <div className="space-y-2">
             <div className="p-4 bg-gray-100 rounded flex justify-between items-center">
-              <p>MockERC20: 0</p>
+              <p>MockERC20: {MockERC20BalanceStr}</p>
               <Button type="primary" icon={<PlusOutlined />} onClick={() => handleOpenModal('MockERC20')} size="small" />
             </div>
             <div className="p-4 bg-gray-100 rounded flex justify-between items-center">
-              <p>MOCK_USDC: 0</p>
+              <p>MOCK_USDC: {MockUSDCBalanceStr}</p>
               <Button type="primary" icon={<PlusOutlined />} onClick={() => handleOpenModal('MOCK_USDC')} size="small" />
             </div>
           </div>

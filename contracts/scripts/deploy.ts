@@ -21,6 +21,26 @@ async function deployMockUniswapV2Pair(mockERC20: any, mockUSDC: any) {
   return mockUniswapV2Pair
 }
 
+async function addInitialLiquidity(mockERC20: any, mockUSDC: any, mockUniswapV2Pair: any) {
+  console.log('\n添加初始流动性...')
+
+  // 授权 Pair 合约使用代币
+  await mockERC20.approve(await mockUniswapV2Pair.getAddress(), ethers.MaxUint256)
+  await mockUSDC.approve(await mockUniswapV2Pair.getAddress(), ethers.MaxUint256)
+
+  // 添加初始流动性 (1000 MTK : 1000 USDC)
+  const amount0 = ethers.parseEther('1000') // MTK 有 18 位小数
+  const amount1 = ethers.parseUnits('1000', 6) // USDC 有 6 位小数
+
+  await mockUniswapV2Pair.addLiquidity(amount0, amount1)
+
+  console.log('初始流动性添加完成！')
+  console.log('-------------------')
+  console.log('初始流动性数量：')
+  console.log(`MockERC20: ${ethers.formatEther(amount0)} MTK`)
+  console.log(`MockUSDC: ${ethers.formatUnits(amount1, 6)} USDC`)
+}
+
 async function main() {
   console.log('开始部署合约...')
   console.log(`当前网络: ${network.name}`)
@@ -40,6 +60,9 @@ async function main() {
   console.log(`MockERC20: ${await mockERC20.getAddress()}`)
   console.log(`MockUSDC: ${await mockUSDC.getAddress()}`)
   console.log(`MockUniswapV2Pair: ${await mockUniswapV2Pair.getAddress()}`)
+
+  // 添加初始流动性
+  await addInitialLiquidity(mockERC20, mockUSDC, mockUniswapV2Pair)
 
   // 只在非本地网络（如 sepolia）上等待确认和验证合约
   if (network.name !== 'hardhat' && network.name !== 'localhost') {

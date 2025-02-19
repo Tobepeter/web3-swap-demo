@@ -2,7 +2,6 @@ import { Address, Hash } from 'viem'
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 
-// WIP: 状态管理
 export interface StoreState {
   address: Address
   chainId: number

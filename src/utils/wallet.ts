@@ -89,6 +89,50 @@ class Wallet {
   }
 
   /**
+   * mint
+   * @param contract 合约地址
+   * @param account 账户地址
+   * @param amount 数量
+   */
+  async mint(contract: Address, account: Address, amount: bigint): Promise<boolean> {
+    // TODO: 之前有一个AI生成的这种，区别是什么？
+    //  const mockERC20Abi = ['function mint(address to, uint256 amount)'] as const
+    const mockERC20Abi = [
+      {
+        type: 'function',
+        name: 'mint',
+        inputs: [
+          { type: 'address', name: 'to' },
+          { type: 'uint256', name: 'amount' },
+        ],
+        outputs: [],
+        stateMutability: 'nonpayable',
+      },
+    ] as const
+
+    const { request } = await this.client.simulateContract({
+      address: contract,
+      abi: mockERC20Abi,
+      functionName: 'mint',
+      args: [account, amount],
+    })
+
+    // 获取当前账户地址
+    const [address] = await this.walletClient.getAddresses()
+
+    // 发送交易并等待确认
+    const hash = await this.walletClient.writeContract({
+      ...request,
+      // TODO: rquest上的地址和这个貌似不一样？
+      account: address,
+    })
+    const receipt = await this.client.waitForTransactionReceipt({ hash })
+
+    console.log('铸造成功', hash, receipt)
+    return receipt.status === 'success'
+  }
+
+  /**
    * 切换网络
    * @param chainId 目标链 ID
    */

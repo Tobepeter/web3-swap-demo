@@ -1,3 +1,4 @@
+import { services } from '@/services/services'
 import { store } from '@/store/store'
 import { format_Mock_ERC20_Balance, format_MOCK_USDC_Balance, isEmptyAddress } from '@/utils/common'
 import { PlusOutlined } from '@ant-design/icons'
@@ -18,16 +19,24 @@ export const HomePage: React.FC = () => {
   const handleOk = async () => {
     // TODO: 这里添加确认后的操作
     console.log(`添加 ${amount} ${selectedToken}`)
+
+    // TODO: 增加 loading 状态
+    if (selectedToken === 'MockERC20') {
+      await services.mintMockERC20(address, BigInt(amount))
+    } else {
+      await services.mintMockUSDC(address, BigInt(amount))
+    }
+
     setIsModalOpen(false)
   }
+
+  // TODO: 增加一个手动刷新，或者轮询刷新余额的能力
 
   const addressStr = isEmptyAddress(address) ? '-' : address
 
   const isConnected = !isEmptyAddress(address)
   const MockERC20BalanceStr = isConnected ? format_Mock_ERC20_Balance(MockERC20_Balance) : '-'
   const MockUSDCBalanceStr = isConnected ? format_MOCK_USDC_Balance(MockUSDC_Balance) : '-'
-
-  console.log('isConnected', isConnected)
 
   return (
     <div className="container mx-auto p-4">

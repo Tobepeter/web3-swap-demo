@@ -5,8 +5,14 @@ import { type Address } from 'viem'
 
 class Services {
   async fetchBalance(token: TokenType) {
+    const address = store.getState().address
+    if (!address) {
+      message.error('请先连接钱包')
+      return
+    }
+
     const config = tokenConfig[token]
-    const balance = await wallet.getBalance(config.address)
+    const balance = await wallet.getTokenBalance(config.address, address)
     const tk = tokenUtil.wei2tk(token, balance)
     console.log(`查询 ${config.name} 余额: ${tk}`)
 

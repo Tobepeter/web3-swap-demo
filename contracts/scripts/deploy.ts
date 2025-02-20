@@ -49,21 +49,25 @@ async function deployMockUniswapV2Pair(mockERC20: MockERC20, mockUSDC: MockUSDC)
 async function addInitialLiquidity(mockERC20: MockERC20, mockUSDC: MockUSDC, mockUniswapV2Pair: MockUniswapV2Pair) {
   console.log('\n添加初始流动性...')
 
+  // TODO: 地址有重复调用，可以缓存下俩
+
   // 授权 Pair 合约使用代币
   await mockERC20.approve(await mockUniswapV2Pair.getAddress(), ethers.MaxUint256)
   await mockUSDC.approve(await mockUniswapV2Pair.getAddress(), ethers.MaxUint256)
 
-  // 添加初始流动性 (1000 MTK : 1000 USDC)
-  const amount0 = ethers.parseEther('1000') // MTK 有 18 位小数
-  const amount1 = ethers.parseUnits('1000', 6) // USDC 有 6 位小数
+  // 添加初始流动性
+  const amount0 = ethers.parseEther('1000')
+  const amount1 = ethers.parseUnits('1000', 6)
 
   await mockUniswapV2Pair.addLiquidity(amount0, amount1)
+
+  // TODO: 有时间这些信息下载为log文件放本地
 
   console.log('初始流动性添加完成！')
   console.log('-------------------')
   console.log('初始流动性数量：')
-  console.log(`MockERC20: ${ethers.formatEther(amount0)} MTK`)
-  console.log(`MockUSDC: ${ethers.formatUnits(amount1, 6)} USDC`)
+  console.log(`Mock_ERC20: ${ethers.formatEther(amount0)}`)
+  console.log(`Mock_USDC: ${ethers.formatUnits(amount1, 6)}`)
   console.log('-------------------')
 }
 

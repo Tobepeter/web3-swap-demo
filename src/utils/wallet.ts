@@ -79,6 +79,36 @@ class Wallet {
   }
 
   /**
+   * 获取 ERC20 代币余额
+   * @param tokenAddress 代币合约地址
+   * @param accountAddress 账户地址
+   * @returns 代币余额
+   */
+  async getTokenBalance(tokenAddress: Address, accountAddress: Address): Promise<bigint> {
+    // NOTE： viem 不支持简化格式
+    // const erc20Abi = ['function balanceOf(address) view returns (uint256)'] as const
+
+    const erc20Abi = [
+      {
+        type: 'function',
+        name: 'balanceOf',
+        inputs: [{ type: 'address', name: 'account' }],
+        outputs: [{ type: 'uint256' }],
+        stateMutability: 'view',
+      },
+    ] as const
+
+    const balance = await this.client.readContract({
+      address: tokenAddress,
+      abi: erc20Abi,
+      functionName: 'balanceOf',
+      args: [accountAddress],
+    })
+
+    return balance as bigint
+  }
+
+  /**
    * 发送交易
    * @param to 接收地址
    * @param amount ETH 数量

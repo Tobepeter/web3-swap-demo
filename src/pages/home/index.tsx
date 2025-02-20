@@ -1,7 +1,7 @@
 import { services } from '@/services/services'
 import { store } from '@/store/store'
 import { isEmptyAddress } from '@/utils/common'
-import { PlusOutlined } from '@ant-design/icons'
+import { PlusOutlined, SyncOutlined } from '@ant-design/icons'
 import { Button, InputNumber, Modal } from 'antd'
 import React, { useState } from 'react'
 
@@ -13,6 +13,7 @@ export const HomePage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [mintToken, setMintToken] = useState<TokenType>(null)
   const [amount, setAmount] = useState<number>(100)
+  const [isRefreshing, setIsRefreshing] = useState(false)
 
   const handleOpenModal = (token: TokenType) => {
     setMintToken(token)
@@ -23,6 +24,15 @@ export const HomePage: React.FC = () => {
     // TODO: 添加loading
     setIsModalOpen(false)
     await services.mint(mintToken, address, amount.toString())
+  }
+
+  const handleRefreshBalance = async (token: TokenType) => {
+    setIsRefreshing(true)
+    try {
+      await services.fetchBalance(token)
+    } finally {
+      setIsRefreshing(false)
+    }
   }
 
   const addressStr = isEmptyAddress(address) ? '-' : address
@@ -44,7 +54,21 @@ export const HomePage: React.FC = () => {
         </div>
 
         <div>
-          <h2 className="text-xl font-semibold mb-2">代币余额</h2>
+          <div className="mb-2">
+            <div className="flex items-center space-x-2">
+              <h2 className="text-xl font-semibold">代币余额</h2>
+              <Button
+                icon={<SyncOutlined spin={isRefreshing} />}
+                onClick={() => {
+                  // TODO: 可以并行的
+                  handleRefreshBalance(mockERC20)
+                  handleRefreshBalance(mockUSDC)
+                }}
+                size="small"
+                loading={isRefreshing}
+              />
+            </div>
+          </div>
           {/* 代币余额显示区域 */}
           <div className="space-y-2">
             <div className="p-4 bg-gray-100 rounded flex justify-between items-center">

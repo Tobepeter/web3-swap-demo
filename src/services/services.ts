@@ -20,10 +20,12 @@ class Services {
   async mint(token: TokenType, account: Address, tk: string): Promise<boolean> {
     const config = tokenConfig[token]
     const wei = tokenUtil.tk2wei(token, tk)
+    // TODO: 处理失败的case
+    //  Uncaught (in promise) ContractFunctionExecutionError: User rejected the request.
     const success = await wallet.mint(config.address, account, wei)
     if (success) {
       const tk = tokenUtil.wei2tk(token, wei)
-      console.log(`铸造 ${tk} 个 ${config.name} 成功`)
+      message.success(`铸造 ${tk} 个 ${config.name} 成功`)
       await this.fetchBalance(token)
     } else {
       message.error(`铸造 ${config.name} 失败`)

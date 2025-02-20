@@ -157,6 +157,13 @@ class Wallet {
     }
   }
 
+  async getChainId(): Promise<number> {
+    const id = await window.ethereum.request({
+      method: 'eth_chainId',
+    })
+    return id
+  }
+
   /**
    * 添加代币到 MetaMask
    * @param tokenAddress 代币合约地址

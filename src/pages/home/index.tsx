@@ -21,7 +21,6 @@ export const HomePage: React.FC = () => {
 
   const handleOk = async () => {
     // TODO: 添加loading
-    console.log(`添加 ${amount} ${mintToken}`)
     setIsModalOpen(false)
     await services.mint(mintToken, address, amount.toString())
   }

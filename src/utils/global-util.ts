@@ -4,6 +4,7 @@ import { sleep, nextFrame } from './common'
 import { HookAPI as ModalHookAPI } from 'antd/es/modal/useModal'
 import { mockERC20, mockUSDC, tokenConfig } from '@/config/token'
 import { store } from '@/store/store'
+import { wallet } from './wallet'
 
 class GlobalUtil {
   init() {
@@ -14,6 +15,7 @@ class GlobalUtil {
   private injectDevConsole() {
     win.React = React
     win.store = store
+    win.wallet = wallet
   }
 
   /**

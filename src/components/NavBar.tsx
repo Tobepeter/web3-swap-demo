@@ -1,9 +1,8 @@
-import { Link } from 'react-router-dom'
-import { useEffect, useState } from 'react'
-import { Address } from 'viem'
+import { services } from '@/services/services'
 import { store } from '@/store/store'
 import { wallet } from '@/utils/wallet'
-import { services } from '@/services/services'
+import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 
 export const NavBar = () => {
   const [isConnecting, setIsConnecting] = useState(false)

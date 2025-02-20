@@ -9,9 +9,8 @@ import { NavBar } from './components/NavBar'
 import { globalUtil } from './utils/global-util'
 
 const App = () => {
-  const { message } = AntdApp.useApp()
-
-  globalUtil.injectAntd(message)
+  const { message, modal } = AntdApp.useApp()
+  globalUtil.injectAntd(message, modal)
 
   return (
     <Router>

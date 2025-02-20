@@ -9,14 +9,17 @@ export const NavBar = () => {
   const [isConnecting, setIsConnecting] = useState(false)
 
   useEffect(() => {
-    const failReason = wallet.initClient()
-    if (failReason) {
-      message.error(failReason)
-    }
+    services.initClient()
   }, [])
 
   const connectWallet = async () => {
-    let valid = false
+    let valid = wallet.isValid
+
+    if (!valid) {
+      valid = services.initClient()
+      if (!valid) return
+    }
+
     try {
       setIsConnecting(true)
       const address = await wallet.connectWallet()

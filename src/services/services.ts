@@ -45,6 +45,15 @@ class Services {
     }
     return success
   }
+
+  initClient(): boolean {
+    const failReason = wallet.initClient()
+    if (failReason) {
+      message.error(failReason)
+      return false
+    }
+    return true
+  }
 }
 
 export const services = new Services()

@@ -1,6 +1,7 @@
 import { MessageInstance } from 'antd/es/message/interface'
 import React from 'react'
 import { sleep, nextFrame } from './common'
+import { HookAPI as ModalHookAPI } from 'antd/es/modal/useModal'
 
 class GlobalUtil {
   init() {
@@ -15,8 +16,9 @@ class GlobalUtil {
   /**
    * 注入 antd 常用方法
    */
-  injectAntd(message: MessageInstance) {
+  injectAntd(message: MessageInstance, modal: ModalHookAPI) {
     win.message = message
+    win.modal = modal
   }
 
   /**
@@ -62,4 +64,5 @@ declare global {
 
   // -- antd --
   const message: MessageInstance
+  const modal: ModalHookAPI
 }

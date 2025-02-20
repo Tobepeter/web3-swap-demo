@@ -1,47 +1,32 @@
-import { addressConfig } from '@/address-config'
-import { useStore } from '@/store/store'
+import { store } from '@/store/store'
+import { tokenUtil } from '@/utils/token-util'
 import { wallet } from '@/utils/wallet'
-import type { Address } from 'viem'
+import { type Address } from 'viem'
 
 class Services {
-  // TODO: 名字太长了，需要优化
-  async getMockERC20Balance(): Promise<bigint> {
-    // TODO: 每次用都要 as 一下，配置的地方改一下
-    const contract = addressConfig.mockERC20 as Address
-    const balance = await wallet.getBalance(contract)
-    console.log('查询 MockERC20 余额', contract, balance)
-    useStore.setState({ MockERC20_Balance: balance })
-    return balance
-  }
+  async fetchBalance(token: TokenType) {
+    const config = tokenConfig[token]
+    const balance = await wallet.getBalance(config.address)
+    const tk = tokenUtil.wei2tk(token, balance)
+    console.log(`查询 ${config.name} 余额: ${tk}`)
 
-  async mintMockERC20(account: Address, amount: bigint): Promise<boolean> {
-    const contract = addressConfig.mockERC20 as Address
-    const success = await wallet.mint(contract, account, amount)
-    if (success) {
-      console.log('铸造 MockERC20 成功', account, amount)
-      await this.getMockERC20Balance()
-    } else {
-      console.log('铸造 MockERC20 失败', account, amount)
+    if (token === mockERC20) {
+      store.setState({ mockERC20: balance, mockERC20TK: tk })
+    } else if (token === mockUSDC) {
+      store.setState({ mockUSDC: balance, mockUSDCTK: tk })
     }
-    return success
   }
 
-  async getMockUSDCBalance(): Promise<bigint> {
-    const contract = addressConfig.mockUSDC as Address
-    const balance = await wallet.getBalance(contract)
-    console.log('查询 MockUSDC 余额', contract, balance)
-    useStore.setState({ MockUSDC_Balance: balance })
-    return balance
-  }
-
-  async mintMockUSDC(account: Address, amount: bigint): Promise<boolean> {
-    const contract = addressConfig.mockUSDC as Address
-    const success = await wallet.mint(contract, account, amount)
+  async mint(token: TokenType, account: Address, tk: string): Promise<boolean> {
+    const config = tokenConfig[token]
+    const wei = tokenUtil.tk2wei(token, tk)
+    const success = await wallet.mint(config.address, account, wei)
     if (success) {
-      console.log('铸造 MockUSDC 成功', account, amount)
-      await this.getMockUSDCBalance()
+      const tk = tokenUtil.wei2tk(token, wei)
+      console.log(`铸造 ${tk} 个 ${config.name} 成功`)
+      await this.fetchBalance(token)
     } else {
-      console.log('铸造 MockUSDC 失败', account, amount)
+      message.error(`铸造 ${config.name} 失败`)
     }
     return success
   }
@@ -56,7 +41,7 @@ class Services {
   }
 
   private onAccountChanged(accounts: string[]) {
-    useStore.setState({ address: accounts[0] as Address })
+    store.setState({ address: accounts[0] as Address })
   }
 
   unlistenAccount() {
@@ -77,12 +62,12 @@ class Services {
     } catch (error) {
       message.error('连接钱包失败')
     }
-    useStore.setState({ address, isConnected })
+    store.setState({ address, isConnected })
 
     // 连接后自动拉取余额
     if (isConnected) {
-      await this.getMockERC20Balance()
-      await this.getMockUSDCBalance()
+      await this.fetchBalance(mockERC20)
+      await this.fetchBalance(mockUSDC)
       this.listenAccount()
     }
   }

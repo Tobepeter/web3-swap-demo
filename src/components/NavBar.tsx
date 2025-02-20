@@ -1,35 +1,28 @@
 import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { Address } from 'viem'
-import { useStore } from '@/store/store'
+import { store } from '@/store/store'
 import { wallet } from '@/utils/wallet'
 import { services } from '@/services/services'
 
 export const NavBar = () => {
   const [isConnecting, setIsConnecting] = useState(false)
-  const isConnected = useStore(state => state.isConnected)
+  const isConnected = store(state => state.isConnected)
 
   useEffect(() => {
     services.initClient()
   }, [])
 
+  // TODO: 增加自动连接功能
   const connectWallet = async () => {
     if (!wallet.isValid) {
       const valid = services.initClient()
       if (!valid) return
     }
-
-    try {
-      setIsConnecting(true)
-      const address = await wallet.connectWallet()
-      useStore.setState({ address: address as Address })
-      console.log('连接钱包成功:', address)
-    } catch (error) {
-      console.error('连接钱包失败:', error)
-      message.error('连接钱包失败')
-    } finally {
+    setIsConnecting(true)
+    await services.connectWallet().finally(() => {
       setIsConnecting(false)
-    }
+    })
   }
 
   let connectText = '未连接'

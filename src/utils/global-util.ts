@@ -2,15 +2,18 @@ import { MessageInstance } from 'antd/es/message/interface'
 import React from 'react'
 import { sleep, nextFrame } from './common'
 import { HookAPI as ModalHookAPI } from 'antd/es/modal/useModal'
+import { mockERC20, mockUSDC, tokenConfig } from '@/config/token'
+import { store } from '@/store/store'
 
 class GlobalUtil {
   init() {
     this.injectUnplugin()
-    this.injectReact()
+    this.injectDevConsole()
   }
 
-  private injectReact() {
+  private injectDevConsole() {
     win.React = React
+    win.store = store
   }
 
   /**
@@ -29,6 +32,8 @@ class GlobalUtil {
    */
   private injectUnplugin() {
     const win = window as any
+
+    // -- win --
     ;(window as any).win = win
 
     // -- react --
@@ -42,6 +47,11 @@ class GlobalUtil {
     // -- utils --
     win.sleep = sleep
     win.nextFrame = nextFrame
+
+    // -- token --
+    win.mockERC20 = mockERC20
+    win.mockUSDC = mockUSDC
+    win.tokenConfig = tokenConfig
   }
 }
 
@@ -65,4 +75,11 @@ declare global {
   // -- antd --
   const message: MessageInstance
   const modal: ModalHookAPI
+
+  // -- token --
+  const mockERC20: typeof import('../config/token').mockERC20
+  const mockUSDC: typeof import('../config/token').mockUSDC
+  type TokenType = import('../config/token').TokenType
+  type TokenConfig = import('../config/token').TokenConfig
+  const tokenConfig: typeof import('../config/token').tokenConfig
 }

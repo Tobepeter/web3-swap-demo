@@ -14,3 +14,11 @@ export const format_Mock_ERC20_Balance = (balance: bigint): string => {
 export const format_MOCK_USDC_Balance = (balance: bigint): string => {
   return formatUnits(balance, USDC_DECIMALS)
 }
+
+export const sleep = (ms: number) => {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+export const nextFrame = () => {
+  return new Promise(resolve => requestAnimationFrame(resolve))
+}

@@ -7,14 +7,17 @@ class Wallet {
   private walletClient: WalletClient // 钱包客户端，用于发送交易
 
   chain: Chain
+  isValid = false
 
-  constructor() {
-    this.initClient()
-  }
+  /**
+   * 初始化客户端
+   * @returns 错误信息
+   */
+  initClient(): string {
+    if (this.isValid) return '已初始化'
 
-  private initClient() {
     if (!window.ethereum) {
-      throw new Error('请安装 MetaMask!')
+      return '请安装 MetaMask!'
     }
 
     this.chain = sepolia
@@ -29,6 +32,9 @@ class Wallet {
       chain: this.chain,
       transport: custom(window.ethereum),
     })
+
+    this.isValid = true
+    return ''
   }
 
   /**

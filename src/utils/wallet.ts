@@ -208,7 +208,7 @@ class Wallet {
    * @param eventName 事件名称
    * @param callback 回调函数
    */
-  removeListener(eventName: string, callback: (...args: any[]) => void) {
+  off(eventName: string, callback: (...args: any[]) => void) {
     window.ethereum.removeListener(eventName, callback)
   }
 }

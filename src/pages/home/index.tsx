@@ -1,12 +1,12 @@
 import { services } from '@/services/services'
-import { store } from '@/store/store'
+import { useStore } from '@/store/store'
 import { format_Mock_ERC20_Balance, format_MOCK_USDC_Balance, isEmptyAddress } from '@/utils/common'
 import { PlusOutlined } from '@ant-design/icons'
 import { Button, InputNumber, Modal } from 'antd'
 import React, { useState } from 'react'
 
 export const HomePage: React.FC = () => {
-  const { address, MockERC20_Balance, MockUSDC_Balance } = store()
+  const { address, MockERC20_Balance, MockUSDC_Balance } = useStore()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedToken, setSelectedToken] = useState<'MockERC20' | 'MOCK_USDC'>('MockERC20')
   const [amount, setAmount] = useState<number>(100)

@@ -1,5 +1,5 @@
 import { addressConfig } from '@/address-config'
-import { store } from '@/store/store'
+import { useStore } from '@/store/store'
 import { wallet } from '@/utils/wallet'
 import type { Address } from 'viem'
 
@@ -10,7 +10,7 @@ class Services {
     const contract = addressConfig.mockERC20 as Address
     const balance = await wallet.getBalance(contract)
     console.log('查询 MockERC20 余额', contract, balance)
-    store.setState({ MockERC20_Balance: balance })
+    useStore.setState({ MockERC20_Balance: balance })
     return balance
   }
 
@@ -30,7 +30,7 @@ class Services {
     const contract = addressConfig.mockUSDC as Address
     const balance = await wallet.getBalance(contract)
     console.log('查询 MockUSDC 余额', contract, balance)
-    store.setState({ MockUSDC_Balance: balance })
+    useStore.setState({ MockUSDC_Balance: balance })
     return balance
   }
 
@@ -53,6 +53,38 @@ class Services {
       return false
     }
     return true
+  }
+
+  private onAccountChanged(accounts: string[]) {
+    useStore.setState({ address: accounts[0] as Address })
+  }
+
+  unlistenAccount() {
+    wallet.off('accountsChanged', this.onAccountChanged)
+  }
+
+  listenAccount() {
+    this.unlistenAccount()
+    wallet.on('accountsChanged', this.onAccountChanged)
+  }
+
+  async connectWallet() {
+    let address: Address = '0x0'
+    let isConnected = false
+    try {
+      address = await wallet.connectWallet()
+      isConnected = true
+    } catch (error) {
+      message.error('连接钱包失败')
+    }
+    useStore.setState({ address, isConnected })
+
+    // 连接后自动拉取余额
+    if (isConnected) {
+      await this.getMockERC20Balance()
+      await this.getMockUSDCBalance()
+      this.listenAccount()
+    }
   }
 }
 

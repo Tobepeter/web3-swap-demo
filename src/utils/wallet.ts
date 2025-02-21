@@ -1,6 +1,7 @@
 import type { Address, Chain, PublicClient, WalletClient } from 'viem'
 import { createPublicClient, createWalletClient, custom, formatEther, http } from 'viem'
 import { sepolia } from 'viem/chains'
+import { MockERC20__factory } from '../../contracts/typechain-types'
 
 class Wallet {
   private client: PublicClient // 公共客户端，用于读取链上数据
@@ -85,8 +86,9 @@ class Wallet {
    * @returns 代币余额
    */
   async getTokenBalance(tokenAddress: Address, accountAddress: Address): Promise<bigint> {
-    // NOTE： viem 不支持简化格式
-    // const erc20Abi = ['function balanceOf(address) view returns (uint256)'] as const
+    // TODO: hardhat 默认生成的 abi 是 ethers 的，使用 viem 不兼容
+    //  有空研究 https://hardhat.org/hardhat-runner/docs/advanced/using-viem
+    const hardHatAbi = MockERC20__factory.abi
 
     const erc20Abi = [
       {
@@ -101,6 +103,7 @@ class Wallet {
     const balance = await this.client.readContract({
       address: tokenAddress,
       abi: erc20Abi,
+      // abi: hardHatAbi,
       functionName: 'balanceOf',
       args: [accountAddress],
     })

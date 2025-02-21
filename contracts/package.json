@@ -14,6 +14,7 @@
     "deploy:hardhat": "hardhat run scripts/deploy.ts --network hardhat",
     "test": "hardhat test",
     "node": "hardhat node",
-    "console": "hardhat console --network localhost"
+    "console": "hardhat console --network localhost",
+    "typechain": "npx hardhat typechain"
   }
 }

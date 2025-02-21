@@ -325,3 +325,119 @@ contract Example {
 4. safeTransferFrom
 
    IERC20(token).safeTransferFrom(msg.sender, to, 1000);
+
+# 为什么 solidity memory 一定要复制内存，不能共享
+
+内存隔离可以避免复杂的内存引用问题
+
+```C++
+// C++ 示例
+class Traditional {
+    void example() {
+        int* ptr1 = new int[2];
+        ptr1[0] = 1;
+
+        // 多个指针指向同一块内存
+        int* ptr2 = ptr1;
+
+        // 可能的问题：
+        delete ptr1;    // 释放内存
+        ptr2[0] = 100;  // 悬空指针！访问已释放的内存
+
+        // 或者重复释放
+        delete ptr2; // 重复释放同一块内存！
+    }
+}
+```
+
+这种设计避免了：
+
+1. 内存管理问题：
+
+   - 没有悬空指针
+   - 不会重复释放内存
+   - 不需要手动内存管理
+
+2. 并发问题：
+
+   - 没有共享内存
+   - 不需要考虑锁和同步
+   - 函数调用结果更可预测
+
+3. 安全隐患：
+
+   - 避免缓冲区溢出
+   - 防止内存泄露
+   - 降低重入攻击风险
+
+虽然这种方式：
+
+- 消耗更多 gas（因为要复制数据）
+- 看起来不够灵活
+- 可能需要更多代码
+
+# hardhat compile 是什么
+
+生成abi和bytecode
+
+1. abi(Application Binary Interface)
+
+描述如何与合约交互的接口定义
+abi 还会通过 `npx hardhat typechain` 生成 ts 类型
+
+2. 字节码
+
+Solidity 是高级语言，需要编译成 EVM（以太坊虚拟机）能理解的字节码
+构建字节码数使用 `npx hardhat compile`
+构建产物在 `artifacts` 目录下
+如果命中缓存，部署时候 getContractFactory 会直接返回缓存
+
+# 我看到有两种类型得到 abi 区别是什么
+
+ethers.js 风格的人类可读 ABI 格式（Human-Readable ABI）。这种简化的 ABI 格式是 ethers.js 的特色功能之一。
+
+1. ethers.js 的简化格式：
+
+```javascript
+const abi = ['function balanceOf(address) view returns (uint256)']
+```
+
+2. viem 要求的标准 JSON ABI 格式：
+
+```javascript
+const abi = [
+  {
+    type: 'function',
+    name: 'balanceOf',
+    inputs: [{ type: 'address', name: 'account' }],
+    outputs: [{ type: 'uint256' }],
+    stateMutability: 'view',
+  },
+]
+```
+
+viem 确实不支持 ethers.js 的简化格式，必须使用完整的 JSON ABI 格式。这是因为：
+
+1. viem 更倾向于使用标准的 Solidity ABI JSON 格式
+2. 完整的 JSON ABI 格式包含了更多的类型信息，有利于 TypeScript 类型推导
+3. 避免了需要解析人类可读格式的额外开销
+
+# 一个typechain不兼容问题
+
+```
+Uncaught SyntaxError: The requested module '/node_modules/.vite/deps/ethers.js?v=498a2c88' does not provide an export named 'Interface' (at Ownable__factory.ts:5:20)
+
+为什么
+```
+
+@nomicfoundation/hardhat-toolbox 默认包含了对 ethers.js 的支持，所以使用 ethers.js 不需要额外安装包
+
+hardhat 默认的 ethers.js Interface 类型，使用 viem 不兼容
+需要进行在 hardhat.config.ts 中配置
+
+```ts
+typechain: {
+  target: 'viem',
+  outDir: 'typechain-types',
+},
+```

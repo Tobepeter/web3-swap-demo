@@ -77,6 +77,11 @@ contract MockUniswapV2Pair {
         require(amount0Out > 0 || amount1Out > 0, "Insufficient output amount");
         require(to != token0 && to != token1, "Invalid recipient");
 
+        // TODO: 可以考虑一次只能交换一个方向
+        // TODO: 手续抽取为const
+        // TODO: 增加适当的滑点
+
+        // 提前存入所有代币
         if (amount0In > 0) {
             IERC20(token0).safeTransferFrom(msg.sender, address(this), amount0In);
         }
@@ -84,14 +89,18 @@ contract MockUniswapV2Pair {
             IERC20(token1).safeTransferFrom(msg.sender, address(this), amount1In);
         }
 
-        // 检查 k 值是否保持不变或增加
-        uint256 balance0 = reserve0 + amount0In - amount0Out;
-        uint256 balance1 = reserve1 + amount1In - amount1Out;
+        // 计算实际输入金额（考虑0.3%手续费）
+        uint256 amount0InAfterFee = amount0In > 0 ? (amount0In * 997) / 1000 : 0;
+        uint256 amount1InAfterFee = amount1In > 0 ? (amount1In * 997) / 1000 : 0;
+
+        // 检查 k 值是否保持不变或增加（使用扣除手续费后的金额）
+        uint256 balance0 = reserve0 + amount0InAfterFee - amount0Out;
+        uint256 balance1 = reserve1 + amount1InAfterFee - amount1Out;
         require(balance0 * balance1 >= reserve0 * reserve1, "K value must not decrease");
 
-        // 更新储备量
-        reserve0 = balance0;
-        reserve1 = balance1;
+        // 更新储备量（包括手续费）
+        reserve0 = reserve0 + amount0InAfterFee - amount0Out;
+        reserve1 = reserve1 + amount1InAfterFee - amount1Out;
 
         if (amount0Out > 0) {
             IERC20(token0).safeTransfer(to, amount0Out);

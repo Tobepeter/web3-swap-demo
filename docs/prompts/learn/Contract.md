@@ -267,3 +267,61 @@ SafeTransferFrom 和 TransferFrom 是 ERC20 标准中的两个函数，主要区
 
    - 可以在部署脚本中统一管理初始流动性的分配
    - 避免后期手动操作可能带来的错误
+
+# 关于事件
+
+1. 事件的优点：
+
+   - 节省存储成本（比存储在状态变量中更便宜）
+   - 提供交易历史记录
+   - 便于链下应用与区块链交互
+   - 可以作为链下数据存储的索引
+
+2. 需要注意的是：
+
+   - 事件数据存储在区块链的日志中，智能合约无法访问
+   - 事件一旦发出就不可更改
+   - indexed 参数会消耗更多的 gas，但便于搜索
+
+# 为什么有的转账需要用 payable，但是有的是 IERC0
+
+ETH是以太坊的原生代币，直接存在于地址的余额中
+
+需要payable来处理ETH的转账
+
+```solidity
+contract Example {
+    // ETH转账 - 需要payable
+    function transferETH(address to) external payable {
+        payable(to).transfer(1 ether);
+    }
+
+    // ERC20转账 - 不需要payable
+    function transferToken(address token, address to) external {
+        IERC20(token).transfer(to, 1000);
+
+        IERC20(token).transferFrom(msg.sender, to, 1000);
+    }
+
+    // 接收ETH - 需要payable
+    receive() external payable {}
+}
+```
+
+# 常见的转账函数
+
+1. transfer
+
+   IERC20(token).transfer(to, 1000);
+
+2. transferFrom
+
+   IERC20(token).transferFrom(msg.sender, to, 1000);
+
+3. safeTransfer
+
+   IERC20(token).safeTransfer(to, 1000);
+
+4. safeTransferFrom
+
+   IERC20(token).safeTransferFrom(msg.sender, to, 1000);

@@ -3,6 +3,7 @@ import { tokenUtil } from '@/utils/token-util'
 import { wallet } from '@/utils/wallet'
 import { contract } from '@/utils/contract'
 import { type Address } from 'viem'
+import { liquidity } from '@/utils/liquidity'
 
 class Services {
   async fetchBalance(token: TokenType) {
@@ -43,6 +44,26 @@ class Services {
   // TODO：需要适配数据变化，不过这个不怎么常用其实
   private onAccountChanged(accounts: string[]) {
     store.setState({ address: accounts[0] as Address })
+  }
+
+  async fetchLiquidity() {
+    const address = store.getState().address
+    if (!address) {
+      message.error('请先连接钱包')
+      return
+    }
+
+    const userLiq = await liquidity.getLiquidity(address)
+    const totalLiq = await liquidity.getTotalLiquidity()
+    const { reserve0, reserve1 } = await liquidity.getReserves()
+    // const tokens = await liquidity.getTokens()
+
+    store.setState({
+      userLiq,
+      totalLiq,
+      reserve0,
+      reserve1,
+    })
   }
 
   unlistenAccount() {

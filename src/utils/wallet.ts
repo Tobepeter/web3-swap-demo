@@ -1,9 +1,7 @@
-import type { Address } from 'viem'
-import { formatEther } from 'viem'
+import { store } from '@/store/store'
+import { Address, formatEther } from 'viem'
 import { MockERC20__factory, MockUSDC__factory } from '../../contracts/typechain-types'
 import { contract } from './contract'
-import { store } from '@/store/store'
-// import 'viem/window';
 
 class Wallet {
   isMetaMaskValid() {
@@ -19,41 +17,42 @@ class Wallet {
   }
 
   /** 余额(wei) */
-  async getWei(addr: Address) {
-    return contract.publicClient.getBalance({ address: addr })
+  async getWei(address: Address) {
+    return contract.publicClient.getBalance({ address })
   }
 
   /** 余额（ETH）*/
-  async getETH(addr: Address) {
-    const balance = await this.getWei(addr)
+  async getETH(address: Address) {
+    const balance = await this.getWei(address)
     return formatEther(balance)
   }
 
   /** 余额 */
-  async getBalance(token: TokenType, addr: Address) {
-    // return this.getBalance2(token, addr)
+  async getBalance(token: TokenType, address: Address) {
+    // return this.getBalanceV2(token, address)
     const abi = token === mockERC20 ? MockERC20__factory.abi : MockUSDC__factory.abi
     const tokenAddress = tokenConfig[token].address
     const balance = await contract.publicClient.readContract({
       address: tokenAddress,
       abi,
       functionName: 'balanceOf',
-      args: [addr],
+      args: [address],
     })
     return balance
   }
 
-  async getBalance2(token: TokenType, addr: Address) {
+  async getBalanceV2(token: TokenType, address: Address) {
     // TODO: 研究了很久很久，这个就是不通
     //  暂时先不用代码生成的方案了
     //  Uncaught (in promise) Error: contract runner does not support calling (operation="call", code=UNSUPPORTED_OPERATION, version=6.13.5)
+    //  不知道，升级到 ethers v6，可不可行
     const target = token === mockERC20 ? contract.erc20 : contract.usdc
-    return await target.balanceOf(addr)
+    return await target.balanceOf(address)
   }
 
   /** 铸造 */
-  async mint(token: TokenType, addr: Address, amount: bigint) {
-    // return this.mint2(token, addr, amount)
+  async mint(token: TokenType, address: Address, amount: bigint) {
+    // return this.mintV2(token, address, amount)
 
     const mockERC20Abi = [
       {
@@ -73,7 +72,7 @@ class Wallet {
       // abi: mockERC20Abi,
       abi: token === mockERC20 ? MockERC20__factory.abi : MockUSDC__factory.abi,
       functionName: 'mint',
-      args: [addr, amount],
+      args: [address, amount],
     })
 
     // 发送交易并等待确认
@@ -88,9 +87,9 @@ class Wallet {
     return receipt.status === 'success'
   }
 
-  async mint2(token: TokenType, addr: Address, amount: bigint) {
+  async mintV2(token: TokenType, address: Address, amount: bigint) {
     const target = token === mockERC20 ? contract.erc20 : contract.usdc
-    await target.mint(addr, amount)
+    await target.mint(address, amount)
   }
 
   /** 精度 */

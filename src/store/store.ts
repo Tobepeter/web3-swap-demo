@@ -12,6 +12,12 @@ export interface StoreState {
   mockERC20TK: string
   mockUSDC: bigint
   mockUSDCTK: string
+
+  userLiq: bigint
+  totalLiq: bigint
+  reserve0: bigint
+  reserve1: bigint
+
   txHash?: Hash // TODO: 做什么的？
 }
 
@@ -25,4 +31,8 @@ export const store = create<StoreState>()((set, get) => ({
   mockUSDC: 0n,
   mockUSDCTK: '',
   txHash: undefined as Hash,
+  userLiq: 0n,
+  totalLiq: 0n,
+  reserve0: 0n,
+  reserve1: 0n,
 }))

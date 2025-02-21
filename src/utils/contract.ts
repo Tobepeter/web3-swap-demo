@@ -1,6 +1,6 @@
 import { addressConfig } from '@/address-config'
 
-import { createPublicClient, createWalletClient, custom, http, PublicClient, WalletClient } from 'viem'
+import { Chain, createPublicClient, createWalletClient, custom, http, PublicClient, WalletClient } from 'viem'
 import { sepolia } from 'viem/chains'
 import { MockERC20, MockERC20__factory, MockUniswapV2Pair, MockUniswapV2Pair__factory, MockUSDC, MockUSDC__factory } from '../../contracts/typechain-types'
 
@@ -12,6 +12,8 @@ class Contract {
   erc20: MockERC20
   usdc: MockUSDC
 
+  chain: Chain = sepolia
+
   /* 初始化合约 */
   init() {
     const { mockERC20, mockUSDC, mockUniswapV2Pair } = addressConfig
@@ -19,12 +21,12 @@ class Contract {
     // TODO: 类型不兼容，不好排查
     this.publicClient = createPublicClient({
       transport: http(),
-      chain: sepolia,
+      chain: this.chain,
     }) as any
 
     this.walletClient = createWalletClient({
       transport: custom(window.ethereum),
-      chain: sepolia,
+      chain: this.chain,
     })
 
     // 连接合约

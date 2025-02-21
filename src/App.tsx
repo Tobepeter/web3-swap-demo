@@ -7,12 +7,14 @@ import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 import { AntdWrapper } from './components/AntdWrapper'
 import { NavBar } from './components/NavBar'
 import { globalUtil } from './utils/global-util'
+import { contract } from './utils/contract'
 
 const App = () => {
   // TODO: Warning: [antd: compatible] antd v5 support React is 16 ~ 18. see https://u.ant.design/v5-for-19 for compatible.
   //  react 19 兼容性不好，很多库都不支持，这里是 antd，还有 ahooks
   const { message, modal } = AntdApp.useApp()
   globalUtil.injectAntd(message, modal)
+  contract.init()
 
   return (
     <Router>
@@ -39,3 +41,10 @@ const WrapApp = () => {
 
 // export default App
 export default WrapApp
+
+// NOTE：如果副作用难以处理，可以放开这段注释
+// if (import.meta.hot) {
+//   import.meta.hot.accept(() => {
+//     window.location.reload()
+//   })
+// }

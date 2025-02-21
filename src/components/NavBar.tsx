@@ -8,15 +8,11 @@ export const NavBar = () => {
   const [isConnecting, setIsConnecting] = useState(false)
   const isConnected = store(state => state.isConnected)
 
-  useEffect(() => {
-    services.initClient()
-  }, [])
-
   // TODO: 增加自动连接功能
   const connectWallet = async () => {
-    if (!wallet.isValid) {
-      const valid = services.initClient()
-      if (!valid) return
+    if (!wallet.isMetaMaskValid()) {
+      message.error('请安装 MetaMask!')
+      return
     }
     setIsConnecting(true)
     await services.connectWallet().finally(() => {

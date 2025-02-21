@@ -1,141 +1,60 @@
-import type { Address, Chain, PublicClient, WalletClient } from 'viem'
-import { createPublicClient, createWalletClient, custom, formatEther, http } from 'viem'
-import { sepolia } from 'viem/chains'
-import { MockERC20__factory } from '../../contracts/typechain-types'
+import type { Address } from 'viem'
+import { formatEther } from 'viem'
+import { MockERC20__factory, MockUSDC__factory } from '../../contracts/typechain-types'
+import { contract } from './contract'
+import { store } from '@/store/store'
+// import 'viem/window';
 
 class Wallet {
-  private client: PublicClient // 公共客户端，用于读取链上数据
-  private walletClient: WalletClient // 钱包客户端，用于发送交易
-
-  chain: Chain
-  isValid = false
-
-  /**
-   * 初始化客户端
-   * @returns 错误信息
-   */
-  initClient(): string {
-    if (this.isValid) return '已初始化'
-
-    if (!window.ethereum) {
-      return '请安装 MetaMask!'
-    }
-
-    this.chain = sepolia
-
-    // TODO: 类型不兼容，不好排查
-    this.client = createPublicClient({
-      chain: this.chain,
-      transport: http(),
-    }) as any
-
-    this.walletClient = createWalletClient({
-      chain: this.chain,
-      transport: custom(window.ethereum),
-    })
-
-    this.isValid = true
-    return ''
+  isMetaMaskValid() {
+    return window.ethereum?.isMetaMask
   }
 
-  /**
-   * 连接钱包
-   * @returns 钱包地址
-   *
-   * 一个 MetaMask 钱包可以同时管理多个账户地址
-   * 这是 EIP-1102 规范的一部分，定义了 Web3 提供商应该如何请求用户授权
-   * accounts[0] 代表当前选中的主账户
-   */
-  async connectWallet(): Promise<Address> {
+  /** 连接钱包 */
+  async connectWallet() {
     const accounts = await window.ethereum.request({
       method: 'eth_requestAccounts',
     })
-    return accounts[0]
+    return accounts[0] as Address
   }
 
-  /**
-   * 获取当前网络 ID
-   * @returns 当前网络 ID
-   */
-  async getNetworkId(): Promise<number> {
-    const chainId = await this.client.transport.getChainId()
-    return chainId
+  /** 余额(wei) */
+  async getWei(addr: Address) {
+    return contract.publicClient.getBalance({ address: addr })
   }
 
-  /**
-   * 获取钱包余额
-   * @param address 钱包地址
-   */
-  async getBalance(address: Address) {
-    return this.client.getBalance({ address })
-  }
-
-  /**
-   * 获取钱包余额（以 ETH 为单位）
-   * @param address 钱包地址
-   */
-  async getBalanceETH(address: Address): Promise<string> {
-    const balance = await this.getBalance(address)
+  /** 余额（ETH）*/
+  async getETH(addr: Address) {
+    const balance = await this.getWei(addr)
     return formatEther(balance)
   }
 
-  /**
-   * 获取 ERC20 代币余额
-   * @param tokenAddress 代币合约地址
-   * @param accountAddress 账户地址
-   * @returns 代币余额
-   */
-  async getTokenBalance(tokenAddress: Address, accountAddress: Address): Promise<bigint> {
-    // TODO: hardhat 默认生成的 abi 是 ethers 的，使用 viem 不兼容
-    //  有空研究 https://hardhat.org/hardhat-runner/docs/advanced/using-viem
-    const hardHatAbi = MockERC20__factory.abi
-
-    const erc20Abi = [
-      {
-        type: 'function',
-        name: 'balanceOf',
-        inputs: [{ type: 'address', name: 'account' }],
-        outputs: [{ type: 'uint256' }],
-        stateMutability: 'view',
-      },
-    ] as const
-
-    const balance = await this.client.readContract({
+  /** 余额 */
+  async getBalance(token: TokenType, addr: Address) {
+    // return this.getBalance2(token, addr)
+    const abi = token === mockERC20 ? MockERC20__factory.abi : MockUSDC__factory.abi
+    const tokenAddress = tokenConfig[token].address
+    const balance = await contract.publicClient.readContract({
       address: tokenAddress,
-      abi: erc20Abi,
-      // abi: hardHatAbi,
+      abi,
       functionName: 'balanceOf',
-      args: [accountAddress],
+      args: [addr],
     })
-
-    return balance as bigint
+    return balance
   }
 
-  /**
-   * 发送交易
-   * @param to 接收地址
-   * @param amount ETH 数量
-   */
-  async sendTransaction(to: Address, amount: bigint) {
-    const [address] = await this.walletClient.getAddresses()
-    return this.walletClient.sendTransaction({
-      account: address,
-      to,
-      value: amount,
-      kzg: undefined,
-      chain: this.chain,
-    })
+  async getBalance2(token: TokenType, addr: Address) {
+    // TODO: 研究了很久很久，这个就是不通
+    //  暂时先不用代码生成的方案了
+    //  Uncaught (in promise) Error: contract runner does not support calling (operation="call", code=UNSUPPORTED_OPERATION, version=6.13.5)
+    const target = token === mockERC20 ? contract.erc20 : contract.usdc
+    return await target.balanceOf(addr)
   }
 
-  /**
-   * mint
-   * @param contract 合约地址
-   * @param account 账户地址
-   * @param amount 数量
-   */
-  async mint(contract: Address, account: Address, amount: bigint): Promise<boolean> {
-    // TODO: 之前有一个AI生成的这种，区别是什么？
-    //  const mockERC20Abi = ['function mint(address to, uint256 amount)'] as const
+  /** 铸造 */
+  async mint(token: TokenType, addr: Address, amount: bigint) {
+    // return this.mint2(token, addr, amount)
+
     const mockERC20Abi = [
       {
         type: 'function',
@@ -149,26 +68,35 @@ class Wallet {
       },
     ] as const
 
-    const { request } = await this.client.simulateContract({
-      address: contract,
-      abi: mockERC20Abi,
+    const { request } = await contract.publicClient.simulateContract({
+      address: tokenConfig[token].address,
+      // abi: mockERC20Abi,
+      abi: token === mockERC20 ? MockERC20__factory.abi : MockUSDC__factory.abi,
       functionName: 'mint',
-      args: [account, amount],
+      args: [addr, amount],
     })
-
-    // 获取当前账户地址
-    const [address] = await this.walletClient.getAddresses()
 
     // 发送交易并等待确认
-    const hash = await this.walletClient.writeContract({
+    const hash = await contract.walletClient.writeContract({
       ...request,
       // TODO: rquest上的地址和这个貌似不一样？
-      account: address,
+      account: store.getState().address,
     })
-    const receipt = await this.client.waitForTransactionReceipt({ hash })
+    const receipt = await contract.publicClient.waitForTransactionReceipt({ hash })
 
     console.log('铸造成功', hash, receipt)
     return receipt.status === 'success'
+  }
+
+  async mint2(token: TokenType, addr: Address, amount: bigint) {
+    const target = token === mockERC20 ? contract.erc20 : contract.usdc
+    await target.mint(addr, amount)
+  }
+
+  /** 精度 */
+  async getDecimals(token: TokenType) {
+    const target = token === mockERC20 ? contract.erc20 : contract.usdc
+    return await target.decimals()
   }
 
   /**
@@ -188,13 +116,6 @@ class Wallet {
       }
       throw error
     }
-  }
-
-  async getChainId(): Promise<number> {
-    const id = await window.ethereum.request({
-      method: 'eth_chainId',
-    })
-    return id
   }
 
   /**
@@ -219,37 +140,12 @@ class Wallet {
     })
   }
 
-  /**
-   * 获取代币精度
-   * @param address 代币合约地址
-   * @returns 代币精度
-   */
-  async getTokenDecimals(address: Address): Promise<number> {
-    const erc20Abi = ['function decimals(address) view returns (uint8)']
-    const decimals = (await this.client.readContract({
-      address: address,
-      abi: erc20Abi,
-      functionName: 'decimals',
-    })) as number
-    return decimals
+  on(name: string, cb: (...args: any[]) => void) {
+    window.ethereum.on(name, cb)
   }
 
-  /**
-   * 监听钱包事件
-   * @param eventName 事件名称
-   * @param callback 回调函数
-   */
-  on(eventName: string, callback: (...args: any[]) => void) {
-    window.ethereum.on(eventName, callback)
-  }
-
-  /**
-   * 移除事件监听
-   * @param eventName 事件名称
-   * @param callback 回调函数
-   */
-  off(eventName: string, callback: (...args: any[]) => void) {
-    window.ethereum.removeListener(eventName, callback)
+  off(name: string, cb: (...args: any[]) => void) {
+    window.ethereum.removeListener(name, cb)
   }
 }
 

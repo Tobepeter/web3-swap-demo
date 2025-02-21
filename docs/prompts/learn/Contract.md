@@ -432,12 +432,4 @@ Uncaught SyntaxError: The requested module '/node_modules/.vite/deps/ethers.js?v
 
 @nomicfoundation/hardhat-toolbox 默认包含了对 ethers.js 的支持，所以使用 ethers.js 不需要额外安装包
 
-hardhat 默认的 ethers.js Interface 类型，使用 viem 不兼容
-需要进行在 hardhat.config.ts 中配置
-
-```ts
-typechain: {
-  target: 'viem',
-  outDir: 'typechain-types',
-},
-```
+doc: https://hardhat.org/hardhat-runner/docs/advanced/using-viem

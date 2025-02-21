@@ -1,5 +1,14 @@
 import React from 'react'
 
+/**
+ * 流动性管理
+ *
+ * 1. 查询用户流动性额度
+ * 2. 查询总流动性，代币总量（以及常量积），比例关系
+ * 3. 展示暂时写死一个手续费
+ * 4. 添加流动性，弹窗形式，只能输入整数，两边输入联动响应（但是都不能超过余额）
+ * 5. 移除流动性，弹窗形式，输入流动性，自动计算出代币数量
+ */
 export const LiquidityPage: React.FC = () => {
   return (
     <div className="container mx-auto p-4">

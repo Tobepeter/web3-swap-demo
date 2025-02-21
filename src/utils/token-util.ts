@@ -1,5 +1,6 @@
 import { store } from '@/store/store'
 import { formatEther, formatUnits, parseEther, parseUnits } from 'viem'
+import { contract } from './contract'
 
 class TokenUtil {
   getBalanceTK(token: TokenType): string {
@@ -11,7 +12,7 @@ class TokenUtil {
     return ''
   }
 
-  tk2wei(token: TokenType, tk: string): bigint {
+  tk2unit(token: TokenType, tk: string): bigint {
     const config = tokenConfig[token]
     let balance: bigint
     if (config.decimal) {
@@ -22,7 +23,7 @@ class TokenUtil {
     return balance
   }
 
-  wei2tk(token: TokenType, wei: bigint): string {
+  unit2tk(token: TokenType, wei: bigint): string {
     const config = tokenConfig[token]
     let tk: string
     if (config.decimal) {
@@ -33,4 +34,5 @@ class TokenUtil {
     return tk
   }
 }
+
 export const tokenUtil = new TokenUtil()

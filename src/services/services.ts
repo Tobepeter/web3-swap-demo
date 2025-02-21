@@ -1,6 +1,7 @@
 import { store } from '@/store/store'
 import { tokenUtil } from '@/utils/token-util'
 import { wallet } from '@/utils/wallet'
+import { contract } from '@/utils/contract'
 import { type Address } from 'viem'
 
 class Services {
@@ -12,8 +13,8 @@ class Services {
     }
 
     const config = tokenConfig[token]
-    const balance = await wallet.getTokenBalance(config.address, address)
-    const tk = tokenUtil.wei2tk(token, balance)
+    const balance = await wallet.getBalance(token, address)
+    const tk = tokenUtil.unit2tk(token, balance)
     console.log(`查询 ${config.name} 余额: ${tk}`)
 
     if (token === mockERC20) {
@@ -23,31 +24,23 @@ class Services {
     }
   }
 
-  async mint(token: TokenType, account: Address, tk: string): Promise<boolean> {
+  async mint(token: TokenType, account: Address, tk: string) {
     const config = tokenConfig[token]
-    const wei = tokenUtil.tk2wei(token, tk)
+    const wei = tokenUtil.tk2unit(token, tk)
     // TODO: 处理失败的case
     //  Uncaught (in promise) ContractFunctionExecutionError: User rejected the request.
-    const success = await wallet.mint(config.address, account, wei)
-    if (success) {
-      const tk = tokenUtil.wei2tk(token, wei)
+    try {
+      await wallet.mint(token, account, wei)
+      const tk = tokenUtil.unit2tk(token, wei)
       message.success(`铸造 ${tk} 个 ${config.name} 成功`)
       await this.fetchBalance(token)
-    } else {
+    } catch (error) {
       message.error(`铸造 ${config.name} 失败`)
+      console.error(error)
     }
-    return success
   }
 
-  initClient(): boolean {
-    const failReason = wallet.initClient()
-    if (failReason) {
-      message.error(failReason)
-      return false
-    }
-    return true
-  }
-
+  // TODO：需要适配数据变化，不过这个不怎么常用其实
   private onAccountChanged(accounts: string[]) {
     store.setState({ address: accounts[0] as Address })
   }

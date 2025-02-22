@@ -1,7 +1,7 @@
 import { routes } from '@/routes/routes'
 import { services } from '@/services/services'
 import { store } from '@/store/store'
-import { wallet } from '@/utils/wallet'
+import { walletControl } from '@/utils/WalletControl'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
@@ -11,7 +11,7 @@ export const NavBar = () => {
 
   // TODO: 增加自动连接功能
   const connectWallet = async () => {
-    if (!wallet.isMetaMaskValid()) {
+    if (!walletControl.isMetaMaskValid()) {
       message.error('请安装 MetaMask!')
       return
     }

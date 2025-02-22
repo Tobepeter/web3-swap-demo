@@ -3,7 +3,7 @@ import { Address, formatEther } from 'viem'
 import { MockERC20__factory, MockUSDC__factory } from '../../contracts/typechain-types'
 import { contract } from './contract'
 
-class Wallet {
+class WalletControl {
   isMetaMaskValid() {
     return window.ethereum?.isMetaMask
   }
@@ -148,4 +148,4 @@ class Wallet {
   }
 }
 
-export const wallet = new Wallet()
+export const walletControl = new WalletControl()

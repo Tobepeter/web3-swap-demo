@@ -1,10 +1,10 @@
 import { store } from '@/store/store'
 import { tokenUtil } from '@/utils/TokenUtil'
-import { wallet } from '@/utils/wallet'
+import { walletControl } from '@/utils/WalletControl'
 import { contract } from '@/utils/contract'
 import { type Address } from 'viem'
 import { liqControl } from '@/utils/LiqControl'
-import { swapControl } from '@/utils/SwapControl'
+import { swapControl } from '@/utils/SwapClient'
 
 /**
  * 服务层
@@ -21,7 +21,7 @@ class Services {
     }
 
     const config = tokenConfig[token]
-    const balance = await wallet.getBalance(token, address)
+    const balance = await walletControl.getBalance(token, address)
     const tk = tokenUtil.unit2tk(token, balance)
     console.log(`查询 ${config.name} 余额: ${tk}`)
 
@@ -42,7 +42,7 @@ class Services {
     // TODO: 处理失败的case
     //  Uncaught (in promise) ContractFunctionExecutionError: User rejected the request.
     try {
-      await wallet.mint(token, account, wei)
+      await walletControl.mint(token, account, wei)
       const tk = tokenUtil.unit2tk(token, wei)
       message.success(`铸造 ${tk} 个 ${config.name} 成功`)
       await this.fetchBalance(token)
@@ -107,19 +107,19 @@ class Services {
   }
 
   unlistenAccount() {
-    wallet.off('accountsChanged', this.onAccountChanged)
+    walletControl.off('accountsChanged', this.onAccountChanged)
   }
 
   listenAccount() {
     this.unlistenAccount()
-    wallet.on('accountsChanged', this.onAccountChanged)
+    walletControl.on('accountsChanged', this.onAccountChanged)
   }
 
   async connectWallet() {
     let address: Address = '0x0'
     let isConnected = false
     try {
-      address = await wallet.connectWallet()
+      address = await walletControl.connectWallet()
       console.log('connectWallet', address)
       isConnected = true
     } catch (error) {

@@ -18,8 +18,8 @@ contract MockUniswapV2Pair {
     uint256 public totalLiquidity;
 
     event Swap(address indexed sender, uint256 amount0In, uint256 amount1In, uint256 amount0Out, uint256 amount1Out, address indexed to);
-    event AddLiquidity(address indexed provider, uint256 amount0, uint256 amount1, uint256 liquidity);
-    event RemoveLiquidity(address indexed provider, uint256 amount0, uint256 amount1, uint256 liquidity);
+    event AddLiquidity(address indexed sender, uint256 amount0, uint256 amount1, uint256 liquidity);
+    event RemoveLiquidity(address indexed sender, uint256 amount0, uint256 amount1, uint256 liquidity);
 
     constructor(address _token0, address _token1) {
         require(_token0 != address(0) && _token1 != address(0), "Invalid token address");

@@ -4,6 +4,9 @@ import { AntdWrapper } from './components/AntdWrapper'
 import { router } from './routes/routes'
 import { contract } from './utils/contract'
 import { globalUtil } from './utils/global-util'
+import { store } from './store/store'
+import { isEmptyAddress } from './utils/common'
+import { historyServices } from './services/HistoryServices'
 
 const App = () => {
   // TODO: Warning: [antd: compatible] antd v5 support React is 16 ~ 18. see https://u.ant.design/v5-for-19 for compatible.
@@ -11,6 +14,15 @@ const App = () => {
   const { message, modal } = AntdApp.useApp()
   globalUtil.injectAntd(message, modal)
   contract.init()
+
+  useEffect(() => {
+    win.testHistory = () => {
+      const address = store.getState().address
+      if (isEmptyAddress(address)) return
+
+      historyServices.init(address)
+    }
+  }, [])
 
   return <RouterProvider router={router} />
 }

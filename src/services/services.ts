@@ -6,6 +6,12 @@ import { type Address } from 'viem'
 import { liqControl } from '@/utils/LiqControl'
 import { swapControl } from '@/utils/SwapControl'
 
+/**
+ * 服务层
+ *
+ * 相比直接调用合约，服务层有很多额外的状态控制
+ * 比如交易后要拉取余额、发生错误要提示
+ */
 class Services {
   async fetchBalance(token: TokenType) {
     const address = store.getState().address
@@ -113,6 +119,7 @@ class Services {
     let isConnected = false
     try {
       address = await wallet.connectWallet()
+      console.log('connectWallet', address)
       isConnected = true
     } catch (error) {
       message.error('连接钱包失败')

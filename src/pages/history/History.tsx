@@ -73,6 +73,8 @@ export const History = () => {
   // 需要倒序的形式，最新的在前面
   const dataSource = history.concat().reverse()
 
+  // TODO：有空可以实现一个无限滚动的，每次滚动加载或者分页模式
+
   return (
     <div className="container mx-auto p-4">
       <Card title="交易历史" className="shadow-lg">

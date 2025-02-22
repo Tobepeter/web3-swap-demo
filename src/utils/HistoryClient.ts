@@ -32,6 +32,20 @@ class HistoryClient {
     })
     return logs
   }
+
+  // 监听后续变化
+  watchLogs(onLogs: (logs: HistoryLog[]) => void) {
+    const client = contract.publicClient
+    const abi = MockUniswapV2Pair__factory.abi
+
+    const unwatch = client.watchEvent({
+      address: addressConfig.mockUniswapV2Pair as Address,
+      events: abi.filter(x => x.type === 'event'),
+      onLogs,
+    })
+
+    return unwatch
+  }
 }
 
 export type HistoryLog = Awaited<ReturnType<HistoryClient['getLogs']>>[number]

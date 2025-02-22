@@ -5,10 +5,14 @@ import { isEmptyAddress } from '@/utils/common'
 import { historyClient, HistoryLog } from '@/utils/HistoryClient'
 
 class HistoryServices {
+  isInit = false
   history: TransactionHistory[] = []
   secPerBlock = 15 // 以太坊区块平均的时间间隔
 
   async init() {
+    if (this.isInit) return
+    this.isInit = true
+
     const address = store.getState().address
 
     if (isEmptyAddress(address)) {
@@ -17,6 +21,20 @@ class HistoryServices {
     }
 
     const logs = await historyClient.getLogs()
+    const history = this.processLogs(logs)
+    historyStore.setState({ history })
+
+    // 监听后续变化
+    const unwatch = historyClient.watchLogs(logs => {
+      const newHistory = this.processLogs(logs)
+      console.log('新的日志', newHistory)
+      historyStore.setState(state => ({
+        history: state.history.concat(newHistory),
+      }))
+    })
+  }
+
+  processLogs(logs: HistoryLog[]) {
     const history: TransactionHistory[] = []
     for (const log of logs) {
       const item = this.processLog(log)
@@ -24,10 +42,7 @@ class HistoryServices {
         history.push(item)
       }
     }
-    // TODO: 是否已经按照时间排序了？
-    // history.sort((a, b) => b.timestamp - a.timestamp)
-
-    historyStore.setState({ history })
+    return history
   }
 
   processLog(log: HistoryLog) {

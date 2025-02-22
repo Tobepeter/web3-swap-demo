@@ -23,7 +23,7 @@ export const Swap = () => {
   const maxToken = payOpt === TOKEN_OPTIONS[0].value ? TK_ERC20 : TK_USDC
   const currentTK = payOpt === TOKEN_OPTIONS[0].value ? mockERC20TK : mockUSDCTK
   const targetTKBalance = receiveOpt === TOKEN_OPTIONS[0].value ? mockERC20TK : mockUSDCTK
-  let updateReceiveAmountTimer = useRef(-1)
+  const updateReceiveAmountTimer = useRef(-1)
 
   const updateReceiveAmount = async () => {
     setIsCalculating(true)

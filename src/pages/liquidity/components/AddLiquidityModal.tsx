@@ -47,8 +47,8 @@ export const AddLiquidityModal: React.FC<AddLiquidityModalProps> = ({ isOpen, on
       const amount1Wei = tokenUtil.tk2unit(TK_USDC, token1.toString())
       await services.addLiquidity(amount0Wei, amount1Wei)
       message.success('添加流动性成功')
-      onSuccess()
-      onClose()
+      onSuccess?.()
+      onClose?.()
     } catch (error) {
       console.error('添加流动性失败:', error)
       message.error('添加流动性失败')
@@ -57,8 +57,14 @@ export const AddLiquidityModal: React.FC<AddLiquidityModalProps> = ({ isOpen, on
     }
   }
 
+  const onCancel = () => {
+    // 处理中，不让关闭
+    if (loading) return
+    onClose?.()
+  }
+
   return (
-    <Modal title="添加流动性" open={isOpen} onOk={handleAddLiquidity} onCancel={onClose} confirmLoading={loading}>
+    <Modal title="添加流动性" open={isOpen} onOk={handleAddLiquidity} onCancel={onCancel} confirmLoading={loading}>
       <div className="space-y-4">
         <div>
           <div className="flex gap-2 mb-2">
@@ -92,6 +98,6 @@ export const AddLiquidityModal: React.FC<AddLiquidityModalProps> = ({ isOpen, on
 
 export interface AddLiquidityModalProps {
   isOpen: boolean
-  onClose: () => void
-  onSuccess: () => void
+  onClose?: () => void
+  onSuccess?: () => void
 }

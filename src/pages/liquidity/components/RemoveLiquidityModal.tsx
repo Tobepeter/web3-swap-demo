@@ -43,8 +43,8 @@ export const RemoveLiquidityModal: React.FC<RemoveLiquidityModalProps> = ({ isOp
     try {
       await services.removeLiquidity(amount)
       message.success('移除流动性成功')
-      onSuccess()
-      onClose()
+      onSuccess?.()
+      onClose?.()
     } catch (error) {
       console.error('移除流动性失败:', error)
       message.error('移除流动性失败')
@@ -53,8 +53,14 @@ export const RemoveLiquidityModal: React.FC<RemoveLiquidityModalProps> = ({ isOp
     }
   }
 
+  const onCancel = () => {
+    // 处理中，不让关闭
+    if (loading) return
+    onClose?.()
+  }
+
   return (
-    <Modal title="移除流动性" open={isOpen} onOk={handleRemoveLiquidity} onCancel={onClose} confirmLoading={loading}>
+    <Modal title="移除流动性" open={isOpen} onOk={handleRemoveLiquidity} onCancel={onCancel} confirmLoading={loading}>
       <div className="space-y-4">
         <div>
           <div className="flex justify-between mb-2">
@@ -82,6 +88,6 @@ export const RemoveLiquidityModal: React.FC<RemoveLiquidityModalProps> = ({ isOp
 
 export interface RemoveLiquidityModalProps {
   isOpen: boolean
-  onClose: () => void
-  onSuccess: () => void
+  onClose?: () => void
+  onSuccess?: () => void
 }

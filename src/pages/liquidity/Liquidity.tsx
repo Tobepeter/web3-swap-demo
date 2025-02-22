@@ -69,10 +69,10 @@ export const Liquidity = () => {
       </div>
 
       {/* 添加流动性弹窗 */}
-      <AddLiquidityModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} onSuccess={fetchLiquidityInfo} />
+      <AddLiquidityModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} />
 
       {/* 移除流动性弹窗 */}
-      <RemoveLiquidityModal isOpen={isRemoveModalOpen} onClose={() => setIsRemoveModalOpen(false)} onSuccess={fetchLiquidityInfo} />
+      <RemoveLiquidityModal isOpen={isRemoveModalOpen} onClose={() => setIsRemoveModalOpen(false)} />
     </div>
   )
 }

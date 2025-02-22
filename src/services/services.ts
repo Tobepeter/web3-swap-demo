@@ -4,6 +4,7 @@ import { wallet } from '@/utils/wallet'
 import { contract } from '@/utils/contract'
 import { type Address } from 'viem'
 import { liquidity } from '@/utils/liquidity'
+import { swap } from '@/utils/swap'
 
 class Services {
   async fetchBalance(token: TokenType) {
@@ -25,6 +26,10 @@ class Services {
     }
   }
 
+  async fetchBalances() {
+    return Promise.all([this.fetchBalance(mockERC20), this.fetchBalance(mockUSDC)])
+  }
+
   async mint(token: TokenType, account: Address, tk: string) {
     const config = tokenConfig[token]
     const wei = tokenUtil.tk2unit(token, tk)
@@ -44,15 +49,13 @@ class Services {
   async addLiquidity(amount0: bigint, amount1: bigint) {
     await liquidity.addLiquidity(amount0, amount1)
     await this.fetchLiquidity()
-    await this.fetchBalance(mockERC20)
-    await this.fetchBalance(mockUSDC)
+    await this.fetchBalances()
   }
 
   async removeLiquidity(amount: bigint) {
     await liquidity.removeLiquidity(amount)
     await this.fetchLiquidity()
-    await this.fetchBalance(mockERC20)
-    await this.fetchBalance(mockUSDC)
+    await this.fetchBalances()
   }
 
   // TODO：需要适配数据变化，不过这个不怎么常用其实
@@ -73,6 +76,10 @@ class Services {
     const reserve0TK = tokenUtil.unit2tk(mockERC20, reserve0)
     const reserve1TK = tokenUtil.unit2tk(mockUSDC, reserve1)
 
+    console.log(`userLiq ${userLiq}, totalLiq ${totalLiq}`)
+    console.log(`reserve0 ${reserve0}, reserve0TK ${reserve0TK}`)
+    console.log(`reserve1 ${reserve1}, reserve1TK ${reserve1TK}`)
+
     store.setState({
       userLiq,
       totalLiq,
@@ -81,6 +88,15 @@ class Services {
       reserve0TK,
       reserve1TK,
     })
+  }
+
+  async getAmountOut(amountIn: bigint, token: TokenType) {
+    return swap.getAmountOut(amountIn, token)
+  }
+
+  async swap(amountIn: bigint, amountOut: bigint, token: TokenType) {
+    await swap.swap(amountIn, amountOut, token)
+    await this.fetchBalances()
   }
 
   unlistenAccount() {
@@ -103,10 +119,10 @@ class Services {
     }
     store.setState({ address, isConnected })
 
-    // 连接后自动拉取余额
+    // 连接后自动拉取数据
     if (isConnected) {
-      await this.fetchBalance(mockERC20)
-      await this.fetchBalance(mockUSDC)
+      await this.fetchBalances()
+      await this.fetchLiquidity()
       this.listenAccount()
     }
   }

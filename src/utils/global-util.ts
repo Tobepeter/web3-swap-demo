@@ -2,7 +2,7 @@ import { MessageInstance } from 'antd/es/message/interface'
 import React from 'react'
 import { sleep, nextFrame } from './common'
 import { HookAPI as ModalHookAPI } from 'antd/es/modal/useModal'
-import { mockERC20, mockUSDC, tokenConfig } from '@/config/token'
+import { TK_ERC20, TK_USDC, tokenConfig } from '@/config/token'
 import { store } from '@/store/store'
 import { wallet } from './wallet'
 
@@ -58,8 +58,8 @@ class GlobalUtil {
   }
 
   injectTokens() {
-    win.mockERC20 = mockERC20
-    win.mockUSDC = mockUSDC
+    win.TK_ERC20 = TK_ERC20
+    win.TK_USDC = TK_USDC
     win.tokenConfig = tokenConfig
   }
 }
@@ -86,8 +86,8 @@ declare global {
   const modal: ModalHookAPI
 
   // -- token --
-  const mockERC20: typeof import('../config/token').mockERC20
-  const mockUSDC: typeof import('../config/token').mockUSDC
+  const TK_ERC20: typeof import('../config/token').TK_ERC20
+  const TK_USDC: typeof import('../config/token').TK_USDC
   type TokenType = import('../config/token').TokenType
   type TokenConfig = import('../config/token').TokenConfig
   const tokenConfig: typeof import('../config/token').tokenConfig

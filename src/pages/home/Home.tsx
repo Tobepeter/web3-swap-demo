@@ -13,30 +13,27 @@ export const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [mintToken, setMintToken] = useState<TokenType>(null)
   const [amount, setAmount] = useState<number>(100)
-  const [isRefreshing, setIsRefreshing] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleOpenModal = (token: TokenType) => {
     setMintToken(token)
     setIsModalOpen(true)
   }
 
-  const handleOk = async () => {
-    // TODO: 添加loading
+  const onMint = async () => {
     setIsModalOpen(false)
+    setIsLoading(true)
     await services.mint(mintToken, address, amount.toString())
+    setIsLoading(false)
   }
 
-  const handleRefreshBalance = async (token: TokenType) => {
-    setIsRefreshing(true)
-    try {
-      await services.fetchBalance(token)
-    } finally {
-      setIsRefreshing(false)
-    }
+  const onRefresh = async () => {
+    setIsLoading(true)
+    await services.fetchBalances()
+    setIsLoading(false)
   }
 
   const addressStr = isEmptyAddress(address) ? '-' : address
-
   const isConnected = !isEmptyAddress(address)
   const MockERC20BalanceStr = isConnected ? mockERC20TK : '-'
   const MockUSDCBalanceStr = isConnected ? mockUSDCTK : '-'
@@ -57,33 +54,24 @@ export const Home = () => {
           <div className="mb-2">
             <div className="flex items-center space-x-2">
               <h2 className="text-xl font-semibold">代币余额</h2>
-              <Button
-                icon={<SyncOutlined spin={isRefreshing} />}
-                onClick={() => {
-                  // TODO: 可以并行的
-                  handleRefreshBalance(mockERC20)
-                  handleRefreshBalance(mockUSDC)
-                }}
-                size="small"
-                loading={isRefreshing}
-              />
+              <Button icon={<SyncOutlined spin={isLoading} />} onClick={onRefresh} size="small" loading={isLoading} disabled={!isConnected} />
             </div>
           </div>
           {/* 代币余额显示区域 */}
           <div className="space-y-2">
             <div className="p-4 bg-gray-100 rounded flex justify-between items-center">
               <p>MockERC20: {MockERC20BalanceStr}</p>
-              <Button type="primary" icon={<PlusOutlined />} onClick={() => handleOpenModal(mockERC20)} size="small" />
+              <Button type="primary" icon={<PlusOutlined />} onClick={() => handleOpenModal(TK_ERC20)} size="small" disabled={!isConnected} />
             </div>
             <div className="p-4 bg-gray-100 rounded flex justify-between items-center">
               <p>MOCK_USDC: {MockUSDCBalanceStr}</p>
-              <Button type="primary" icon={<PlusOutlined />} onClick={() => handleOpenModal(mockUSDC)} size="small" />
+              <Button type="primary" icon={<PlusOutlined />} onClick={() => handleOpenModal(TK_USDC)} size="small" disabled={!isConnected} />
             </div>
           </div>
         </div>
       </div>
 
-      <Modal title={`添加${mintToken}代币（测试用）`} open={isModalOpen} onOk={handleOk} onCancel={() => setIsModalOpen(false)}>
+      <Modal title={`添加${mintToken}代币（测试用）`} open={isModalOpen} onOk={onMint} onCancel={() => setIsModalOpen(false)}>
         <div className="py-4">
           <InputNumber defaultValue={100} value={amount} onChange={value => setAmount(value || 0)} style={{ width: '100%' }} />
         </div>

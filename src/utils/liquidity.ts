@@ -146,8 +146,8 @@ class Liquidity {
       amount1 = (BigInt(percentMult) * reserve1) / BigInt(divider)
     }
 
-    const token0 = tokenUtil.unit2tk(mockERC20, amount0)
-    const token1 = tokenUtil.unit2tk(mockUSDC, amount1)
+    const token0 = tokenUtil.unit2tk(TK_ERC20, amount0)
+    const token1 = tokenUtil.unit2tk(TK_USDC, amount1)
     return { amount0, amount1, token0, token1 }
   }
 

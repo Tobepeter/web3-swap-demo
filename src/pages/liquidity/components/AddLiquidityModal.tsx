@@ -20,8 +20,8 @@ export const AddLiquidityModal: React.FC<AddLiquidityModalProps> = ({ isOpen, on
   const [loading, setLoading] = useState(false)
 
   const masAddTokens = liquidity.getMaxAddLiquidityTokens()
-  const maxAddToken0 = Number(tokenUtil.unit2tk(mockERC20, masAddTokens.amount0))
-  const maxAddToken1 = Number(tokenUtil.unit2tk(mockUSDC, masAddTokens.amount1))
+  const maxAddToken0 = Number(tokenUtil.unit2tk(TK_ERC20, masAddTokens.amount0))
+  const maxAddToken1 = Number(tokenUtil.unit2tk(TK_USDC, masAddTokens.amount1))
 
   const onChangeToken0 = (value: number) => {
     // TODO: 这么处理不知道会不会有问题，理论上要用bigint来计算转换的
@@ -43,8 +43,8 @@ export const AddLiquidityModal: React.FC<AddLiquidityModalProps> = ({ isOpen, on
 
     setLoading(true)
     try {
-      const amount0Wei = tokenUtil.tk2unit(mockERC20, token0.toString())
-      const amount1Wei = tokenUtil.tk2unit(mockUSDC, token1.toString())
+      const amount0Wei = tokenUtil.tk2unit(TK_ERC20, token0.toString())
+      const amount1Wei = tokenUtil.tk2unit(TK_USDC, token1.toString())
       await services.addLiquidity(amount0Wei, amount1Wei)
       message.success('添加流动性成功')
       onSuccess()

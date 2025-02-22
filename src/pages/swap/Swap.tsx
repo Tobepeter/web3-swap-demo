@@ -7,8 +7,8 @@ import React, { useState } from 'react'
 export const Swap = () => {
   // TODO: 感觉变量还是不能放全局，需要导入
   const TOKEN_OPTIONS = [
-    { value: mockERC20, label: 'MockERC20' },
-    { value: mockUSDC, label: 'MOCK_USDC' },
+    { value: TK_ERC20, label: 'MockERC20' },
+    { value: TK_USDC, label: 'MOCK_USDC' },
   ]
   const mockERC20TK = store(state => state.mockERC20TK)
   const mockUSDCTK = store(state => state.mockUSDCTK)
@@ -20,7 +20,7 @@ export const Swap = () => {
   const [isCalculating, setIsCalculating] = useState(false)
   const [isExchanging, setIsExchanging] = useState(false)
 
-  const maxToken = payOpt === TOKEN_OPTIONS[0].value ? mockERC20 : mockUSDC
+  const maxToken = payOpt === TOKEN_OPTIONS[0].value ? TK_ERC20 : TK_USDC
   const currentTK = payOpt === TOKEN_OPTIONS[0].value ? mockERC20TK : mockUSDCTK
   const targetTKBalance = receiveOpt === TOKEN_OPTIONS[0].value ? mockERC20TK : mockUSDCTK
   let updateReceiveAmountTimer = useRef(-1)

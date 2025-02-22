@@ -69,10 +69,10 @@ export const RemoveLiquidityModal: React.FC<RemoveLiquidityModalProps> = ({ isOp
         <div className="p-4 bg-gray-100 rounded">
           <p>您将收到:</p>
           <p>
-            {mockERC20}: {token0}
+            {TK_ERC20}: {token0}
           </p>
           <p>
-            {mockUSDC}: {token1}
+            {TK_USDC}: {token1}
           </p>
         </div>
       </div>

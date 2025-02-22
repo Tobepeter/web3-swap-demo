@@ -49,10 +49,10 @@ export const Liquidity = () => {
           <div className="p-4 bg-gray-100 rounded">
             <p>总储备量:</p>
             <p>
-              {mockERC20}: {tokenUtil.unit2tk(mockERC20, reserve0)}
+              {TK_ERC20}: {tokenUtil.unit2tk(TK_ERC20, reserve0)}
             </p>
             <p>
-              {mockUSDC}: {tokenUtil.unit2tk(mockUSDC, reserve1)}
+              {TK_USDC}: {tokenUtil.unit2tk(TK_USDC, reserve1)}
             </p>
           </div>
         </div>

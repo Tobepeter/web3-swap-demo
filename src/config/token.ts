@@ -1,12 +1,11 @@
 import { addressConfig } from '@/address-config'
 import { Address } from 'viem'
 
-// TODO: 这个全局变量太容易和本地变量冲突了
-export const mockERC20 = 'MockERC20'
+export const TK_ERC20 = 'MockERC20'
 
-export const mockUSDC = 'MOCK_USDC'
+export const TK_USDC = 'MOCK_USDC'
 
-export type TokenType = typeof mockERC20 | typeof mockUSDC
+export type TokenType = typeof TK_ERC20 | typeof TK_USDC
 
 export type TokenConfig = {
   name: string
@@ -15,12 +14,12 @@ export type TokenConfig = {
 }
 
 export const tokenConfig: Record<string, TokenConfig> = {
-  [mockERC20]: {
-    name: mockERC20,
+  [TK_ERC20]: {
+    name: TK_ERC20,
     address: addressConfig.mockERC20 as Address,
   },
-  [mockUSDC]: {
-    name: mockUSDC,
+  [TK_USDC]: {
+    name: TK_USDC,
     address: addressConfig.mockUSDC as Address,
     decimal: 6,
   },

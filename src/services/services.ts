@@ -19,15 +19,15 @@ class Services {
     const tk = tokenUtil.unit2tk(token, balance)
     console.log(`查询 ${config.name} 余额: ${tk}`)
 
-    if (token === mockERC20) {
+    if (token === TK_ERC20) {
       store.setState({ mockERC20: balance, mockERC20TK: tk })
-    } else if (token === mockUSDC) {
+    } else if (token === TK_USDC) {
       store.setState({ mockUSDC: balance, mockUSDCTK: tk })
     }
   }
 
   async fetchBalances() {
-    return Promise.all([this.fetchBalance(mockERC20), this.fetchBalance(mockUSDC)])
+    return Promise.all([this.fetchBalance(TK_ERC20), this.fetchBalance(TK_USDC)])
   }
 
   async mint(token: TokenType, account: Address, tk: string) {
@@ -73,8 +73,8 @@ class Services {
     const userLiq = await liquidity.getLiquidity(address)
     const totalLiq = await liquidity.getTotalLiquidity()
     const { reserve0, reserve1 } = await liquidity.getReserves()
-    const reserve0TK = tokenUtil.unit2tk(mockERC20, reserve0)
-    const reserve1TK = tokenUtil.unit2tk(mockUSDC, reserve1)
+    const reserve0TK = tokenUtil.unit2tk(TK_ERC20, reserve0)
+    const reserve1TK = tokenUtil.unit2tk(TK_USDC, reserve1)
 
     console.log(`userLiq ${userLiq}, totalLiq ${totalLiq}`)
     console.log(`reserve0 ${reserve0}, reserve0TK ${reserve0TK}`)

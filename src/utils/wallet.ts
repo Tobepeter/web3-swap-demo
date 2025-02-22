@@ -30,7 +30,7 @@ class Wallet {
   /** 余额 */
   async getBalance(token: TokenType, address: Address) {
     // return this.getBalanceV2(token, address)
-    const abi = token === mockERC20 ? MockERC20__factory.abi : MockUSDC__factory.abi
+    const abi = token === TK_ERC20 ? MockERC20__factory.abi : MockUSDC__factory.abi
     const tokenAddress = tokenConfig[token].address
     const balance = await contract.publicClient.readContract({
       address: tokenAddress,
@@ -46,7 +46,7 @@ class Wallet {
     //  暂时先不用代码生成的方案了
     //  Uncaught (in promise) Error: contract runner does not support calling (operation="call", code=UNSUPPORTED_OPERATION, version=6.13.5)
     //  不知道，升级到 ethers v6，可不可行
-    const target = token === mockERC20 ? contract.erc20 : contract.usdc
+    const target = token === TK_ERC20 ? contract.erc20 : contract.usdc
     return await target.balanceOf(address)
   }
 
@@ -70,7 +70,7 @@ class Wallet {
     const { request } = await contract.publicClient.simulateContract({
       address: tokenConfig[token].address,
       // abi: mockERC20Abi,
-      abi: token === mockERC20 ? MockERC20__factory.abi : MockUSDC__factory.abi,
+      abi: token === TK_ERC20 ? MockERC20__factory.abi : MockUSDC__factory.abi,
       functionName: 'mint',
       args: [address, amount],
     })
@@ -88,13 +88,13 @@ class Wallet {
   }
 
   async mintV2(token: TokenType, address: Address, amount: bigint) {
-    const target = token === mockERC20 ? contract.erc20 : contract.usdc
+    const target = token === TK_ERC20 ? contract.erc20 : contract.usdc
     await target.mint(address, amount)
   }
 
   /** 精度 */
   async getDecimals(token: TokenType) {
-    const target = token === mockERC20 ? contract.erc20 : contract.usdc
+    const target = token === TK_ERC20 ? contract.erc20 : contract.usdc
     return await target.decimals()
   }
 

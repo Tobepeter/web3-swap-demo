@@ -28,10 +28,10 @@ class Swap {
    * @returns 交易回执
    */
   async swap(amountIn: bigint, amountOut: bigint, token: TokenType) {
-    const amount0In = token === mockERC20 ? amountIn : 0n
-    const amount1In = token === mockUSDC ? amountIn : 0n
-    const amount0Out = token === mockUSDC ? amountOut : 0n
-    const amount1Out = token === mockERC20 ? amountOut : 0n
+    const amount0In = token === TK_ERC20 ? amountIn : 0n
+    const amount1In = token === TK_USDC ? amountIn : 0n
+    const amount0Out = token === TK_USDC ? amountOut : 0n
+    const amount1Out = token === TK_ERC20 ? amountOut : 0n
 
     const tx = await contract.walletClient.writeContract({
       address: addressConfig.mockUniswapV2Pair as Address,

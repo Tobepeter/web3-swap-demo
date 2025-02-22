@@ -4,9 +4,9 @@ import { contract } from './contract'
 
 class TokenUtil {
   getBalanceTK(token: TokenType): string {
-    if (token === mockERC20) {
+    if (token === TK_ERC20) {
       return store.getState().mockERC20TK
-    } else if (token === mockUSDC) {
+    } else if (token === TK_USDC) {
       return store.getState().mockUSDCTK
     }
     return ''

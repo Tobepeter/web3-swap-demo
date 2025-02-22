@@ -103,6 +103,7 @@ class Services {
   async swap(amountIn: bigint, amountOut: bigint, token: TokenType) {
     await swapControl.swap(amountIn, amountOut, token)
     await this.fetchBalances()
+    message.success('交换成功')
   }
 
   unlistenAccount() {

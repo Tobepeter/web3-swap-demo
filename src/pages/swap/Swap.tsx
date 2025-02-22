@@ -90,7 +90,7 @@ export const Swap = () => {
     const amountIn = tokenUtil.tk2unit(payToken, payAmount)
     const amountOut = await services.getAmountOut(amountIn, payToken)
 
-    console.log(`swap 支付 ${payAmount} ${payToken}，期望得到 ${receiveAmount} ${receiveToken}`)
+    console.log(`swap 支付 ${payAmount} ${payToken} => ${receiveAmount} ${receiveToken}`)
 
     // 计算预期结果
     const state = store.getState()
@@ -98,12 +98,14 @@ export const Swap = () => {
     const balanceOut = receiveToken === TK_ERC20 ? state.mockERC20 : state.mockUSDC
     const expectIn = tokenUtil.unit2tk(payToken, balanceIn - amountIn)
     const expectOut = tokenUtil.unit2tk(receiveToken, balanceOut + amountOut)
-    console.log(`swap 预期余额 ${expectIn} ${payToken}，期望得到 ${expectOut} ${receiveToken}`)
+    console.log(`swap 预期余额 ${expectIn} ${payToken}, ${expectOut} ${receiveToken}`)
 
-    // TODO: 目前交换后貌似不对
-    // console.log(`swap 预期余额 ${payAmount} ${payToken}，期望得到 ${receiveAmount} ${receiveToken}`)
     await services.swap(amountIn, amountOut, payToken)
     setIsExchanging(false)
+
+    // 清空表单
+    setPayAmount('')
+    setReceiveAmount('')
   }
 
   /** 是否可以交换 */

@@ -4,6 +4,8 @@ import { MockERC20__factory, MockUSDC__factory } from '../../contracts/typechain
 import { contract } from './contract'
 
 class WalletControl {
+  metaMaskInstallUrl = 'https://chromewebstore.google.com/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn'
+
   isMetaMaskValid() {
     return window.ethereum?.isMetaMask
   }

@@ -18,7 +18,16 @@ export const NavBar = () => {
     }
 
     if (!walletControl.isMetaMaskValid()) {
-      message.error('请安装 MetaMask!')
+      // message.error('请安装 MetaMask!')
+      modal.info({
+        title: '请安装 MetaMask!',
+        content: 'MetaMask 是一个以太坊钱包，用于连接到以太坊区块链。',
+        onOk: () => {
+          window.open(walletControl.metaMaskInstallUrl, '_blank')
+        },
+        okText: '安装 MetaMask',
+        cancelText: '稍后安装',
+      })
       return
     }
 

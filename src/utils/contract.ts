@@ -36,6 +36,12 @@ class Contract {
       chain: this.chain,
     }) as any
 
+    // TODO：看看如何优化体验
+    // 如果 window.ethereum 不存在，则不初始化 walletClient
+    if (!window.ethereum) {
+      return
+    }
+
     this.walletClient = createWalletClient({
       transport: custom(window.ethereum),
       chain: this.chain,

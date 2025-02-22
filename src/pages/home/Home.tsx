@@ -35,8 +35,8 @@ export const Home = () => {
 
   const addressStr = isEmptyAddress(address) ? '-' : address
   const isConnected = !isEmptyAddress(address)
-  const MockERC20BalanceStr = isConnected ? mockERC20TK : '-'
-  const MockUSDCBalanceStr = isConnected ? mockUSDCTK : '-'
+  const MockERC20BalanceStr = isConnected && !isLoading ? mockERC20TK : '-'
+  const MockUSDCBalanceStr = isConnected && !isLoading ? mockUSDCTK : '-'
 
   return (
     <div className="container mx-auto p-4">
@@ -60,11 +60,15 @@ export const Home = () => {
           {/* 代币余额显示区域 */}
           <div className="space-y-2">
             <div className="p-4 bg-gray-100 rounded flex justify-between items-center">
-              <p>MockERC20: {MockERC20BalanceStr}</p>
+              <p>
+                {TK_ERC20}: {MockERC20BalanceStr}
+              </p>
               <Button type="primary" icon={<PlusOutlined />} onClick={() => handleOpenModal(TK_ERC20)} size="small" disabled={!isConnected} />
             </div>
             <div className="p-4 bg-gray-100 rounded flex justify-between items-center">
-              <p>MOCK_USDC: {MockUSDCBalanceStr}</p>
+              <p>
+                {TK_USDC}: {MockUSDCBalanceStr}
+              </p>
               <Button type="primary" icon={<PlusOutlined />} onClick={() => handleOpenModal(TK_USDC)} size="small" disabled={!isConnected} />
             </div>
           </div>

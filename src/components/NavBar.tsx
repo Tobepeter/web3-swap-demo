@@ -65,6 +65,7 @@ export const NavBar = () => {
             {routes[0].children.map(route => {
               return (
                 <Link to={route.path} key={route.path} className="flex items-center px-2 py-2 text-gray-700 hover:text-gray-900">
+                  <span className="mr-1">{route.icon}</span>
                   {route.name}
                 </Link>
               )

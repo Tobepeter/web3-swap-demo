@@ -1,9 +1,10 @@
+import { TokenTag } from '@/components/TokenTag'
 import { services } from '@/services/services'
 import { store } from '@/store/store'
 import { liqControl } from '@/utils/LiqControl'
 import { tokenUtil } from '@/utils/TokenUtil'
-import { InputNumber, message, Modal } from 'antd'
-import React, { useEffect, useState } from 'react'
+import { InputNumber, message, Modal, Typography } from 'antd'
+import React, { useState } from 'react'
 
 export const AddLiquidityModal: React.FC<AddLiquidityModalProps> = ({ isOpen, onClose, onSuccess }) => {
   const mockERC20TK = store(state => state.mockERC20TK)
@@ -65,15 +66,17 @@ export const AddLiquidityModal: React.FC<AddLiquidityModalProps> = ({ isOpen, on
 
   return (
     <Modal title="添加流动性" open={isOpen} onOk={handleAddLiquidity} onCancel={onCancel} confirmLoading={loading}>
-      <div className="space-y-4">
+      <div className="space-y-4 mt-2">
         <div>
           <div className="flex gap-2 mb-2">
-            <span>MockERC20</span>
-            <span>最大添加值: {maxAddToken0}</span>
-            <span>当前余额: {mockERC20TK}</span>
+            <TokenTag token={TK_ERC20} />
+            {/* <span>最大添加值: {maxAddToken0}</span>
+            <span>当前余额: {mockERC20TK}</span> */}
+            <Typography.Text type="secondary">最大添加: {maxAddToken0}</Typography.Text>
+            <Typography.Text type="secondary">当前: {mockERC20TK}</Typography.Text>
           </div>
           <InputNumber
-            className="w-full"
+            style={{ width: '100%' }}
             value={token0}
             onChange={onChangeToken0}
             // TODO: 即使是token，也不建议转换为数字，后续可能放弃 InputNumber，自己做一个
@@ -85,11 +88,11 @@ export const AddLiquidityModal: React.FC<AddLiquidityModalProps> = ({ isOpen, on
 
         <div>
           <div className="flex gap-2 mb-2">
-            <span>MOCK_USDC</span>
-            <span>最大添加值: {maxAddToken1}</span>
-            <span>当前余额: {mockUSDCTK}</span>
+            <TokenTag token={TK_USDC} />
+            <Typography.Text type="secondary">最大添加: {maxAddToken1}</Typography.Text>
+            <Typography.Text type="secondary">当前: {mockUSDCTK}</Typography.Text>
           </div>
-          <InputNumber className="w-full" value={token1} onChange={onChangeToken1} min={0} max={maxAddToken1} placeholder="0.0" />
+          <InputNumber style={{ width: '100%' }} value={token1} onChange={onChangeToken1} min={0} max={maxAddToken1} placeholder="0.0" />
         </div>
       </div>
     </Modal>

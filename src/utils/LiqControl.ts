@@ -158,7 +158,7 @@ class LiqControl {
     // TODO: reserve 为 0，比例计算不了，不知道该如何处理
     const { reserve0, reserve1, mockERC20, mockUSDC } = store.getState()
 
-    // TODO: 应该会有严重的bug，因为tokens的decimals是不同的，这个公式需要调整
+    // TODO: 可能有bug，因为tokens的decimals是不同的，这个公式需要调整
 
     let amount0 = 0n
     let amount1 = 0n
@@ -167,17 +167,15 @@ class LiqControl {
       const percFactor = 2
       // TODO: 很多精度换算代码，待优化
       const mult = BigInt(10 ** (this.precision + percFactor))
-      // 比例尺不同，非常容易丢失精度，一定要额外计算一个Inv
       const reserveRatio = (reserve0 * mult) / reserve1
-      const reserveRatioInv = (reserve1 * mult) / reserve0
       const tokenRatio = (mockERC20 * mult) / mockUSDC
 
       if (reserveRatio > tokenRatio) {
         amount0 = mockERC20
-        amount1 = (amount0 * reserveRatioInv) / mult
+        amount1 = (amount0 * reserve1) / reserve0
       } else {
         amount1 = mockUSDC
-        amount0 = (amount1 * reserveRatio) / mult
+        amount0 = (amount1 * reserve0) / reserve1
       }
     }
     return { amount0, amount1 }

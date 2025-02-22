@@ -1,7 +1,7 @@
 import { services } from '@/services/services'
 import { store } from '@/store/store'
-import { liquidity } from '@/utils/liquidity'
-import { tokenUtil } from '@/utils/token-util'
+import { liqControl } from '@/utils/LiqControl'
+import { tokenUtil } from '@/utils/TokenUtil'
 import { InputNumber, message, Modal } from 'antd'
 import React, { useEffect, useState } from 'react'
 
@@ -19,7 +19,7 @@ export const AddLiquidityModal: React.FC<AddLiquidityModalProps> = ({ isOpen, on
   const [token1, setToken1] = useState(0)
   const [loading, setLoading] = useState(false)
 
-  const masAddTokens = liquidity.getMaxAddLiquidityTokens()
+  const masAddTokens = liqControl.getMaxAddLiquidityTokens()
   const maxAddToken0 = Number(tokenUtil.unit2tk(TK_ERC20, masAddTokens.amount0))
   const maxAddToken1 = Number(tokenUtil.unit2tk(TK_USDC, masAddTokens.amount1))
 

@@ -1,6 +1,6 @@
 import { services } from '@/services/services'
 import { store } from '@/store/store'
-import { liquidity } from '@/utils/liquidity'
+import { liqControl } from '@/utils/LiqControl'
 import { InputNumber, message, Modal } from 'antd'
 import React, { useState } from 'react'
 
@@ -10,10 +10,10 @@ export const RemoveLiquidityModal: React.FC<RemoveLiquidityModalProps> = ({ isOp
   const [rmPerc, setRemovePerc] = useState(0)
   const [loading, setLoading] = useState(false)
 
-  const userPerc = liquidity.getUserLpPercent()
-  const maxPerc = 100 - 1 / 10 ** liquidity.precision
+  const userPerc = liqControl.getUserLpPercent()
+  const maxPerc = 100 - 1 / 10 ** liqControl.precision
   const maxRemovePerc = Math.min(userPerc, maxPerc)
-  const { token0, token1 } = liquidity.getRemoveLiquidityTokens(rmPerc)
+  const { token0, token1 } = liqControl.getRemoveLiquidityTokens(rmPerc)
 
   const onChange = (val: number) => {
     val = Math.min(val, maxRemovePerc)
@@ -28,7 +28,7 @@ export const RemoveLiquidityModal: React.FC<RemoveLiquidityModalProps> = ({ isOp
       return
     }
 
-    const amount = liquidity.getLPByPerc(rmPerc)
+    const amount = liqControl.getLPByPerc(rmPerc)
     if (amount <= 0n) {
       message.error('移除的流动性数量必须大于0')
       return

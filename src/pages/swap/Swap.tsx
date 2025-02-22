@@ -1,6 +1,6 @@
 import { services } from '@/services/services'
 import { store } from '@/store/store'
-import { tokenUtil } from '@/utils/token-util'
+import { tokenUtil } from '@/utils/TokenUtil'
 import { Button, Card, Form, Input, Select, Typography } from 'antd'
 import React, { useState } from 'react'
 

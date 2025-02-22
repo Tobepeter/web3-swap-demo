@@ -2,43 +2,27 @@ import { Address, Hash } from 'viem'
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 
-// TODO: 接口和声明两边写，貌似官方也没有比较好的解决方式
-//  https://zustand.docs.pmnd.rs/guides/typescript
-export interface StoreState {
-  address: Address
-  isConnected: boolean
-  chainId: number
-  mockERC20: bigint
-  mockERC20TK: string
-  mockUSDC: bigint
-  mockUSDCTK: string
+export const defaultState = {
+  address: '0x0' as Address, // 钱包地址
+  isConnected: false, // 是否连接钱包
+  chainId: 1, // 链ID
+  mockERC20: 0n, // 代币余额
+  mockERC20TK: '0', // 代币余额
+  mockUSDC: 0n, // 代币余额
+  mockUSDCTK: '0', // 代币余额
 
-  userLiq: bigint
-  totalLiq: bigint
-  reserve0: bigint
-  reserve0TK: string
-  reserve1: bigint
-  reserve1TK: string
-
-  txHash?: Hash // TODO: 做什么的？
+  userLiq: 0n, // 用户流动性
+  totalLiq: 0n, // 总流动性
+  reserve0: 0n, // 储备量
+  reserve0TK: '0', // 储备量
+  reserve1: 0n, // 储备量
+  reserve1TK: '0', // 储备量
 }
+
+export type StoreState = typeof defaultState
+export type PartialStoreState = Partial<StoreState>
 
 // TODO: 使用devtools，setState的泛型会丢失
 export const store = create<StoreState>()((set, get) => ({
-  address: '0x0' as Address,
-  isConnected: false,
-  chainId: 1,
-  mockERC20: 0n,
-  mockERC20TK: '0',
-  mockUSDC: 0n,
-  mockUSDCTK: '0',
-  txHash: undefined as Hash,
-  userLiq: 0n,
-  totalLiq: 0n,
-  reserve0: 0n,
-  reserve0TK: '0',
-  reserve1: 0n,
-  reserve1TK: '0',
-  maxAddLiq0: 0n,
-  maxAddLiq1: 0n,
+  ...defaultState,
 }))

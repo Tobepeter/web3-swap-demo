@@ -3,8 +3,8 @@ import { RemoveLiquidityModal } from '@/pages/liquidity/components/RemoveLiquidi
 import { services } from '@/services/services'
 import { store } from '@/store/store'
 import { isEmptyAddress } from '@/utils/common'
-import { liquidity } from '@/utils/liquidity'
-import { tokenUtil } from '@/utils/token-util'
+import { liqControl } from '@/utils/LiqControl'
+import { tokenUtil } from '@/utils/TokenUtil'
 import { Button } from 'antd'
 import { useEffect, useState } from 'react'
 
@@ -44,7 +44,7 @@ export const Liquidity = () => {
         <h2 className="text-xl font-semibold mb-4">流动性信息</h2>
         <div className="space-y-2">
           <div className="p-4 bg-gray-100 rounded">
-            <p>我的流动性: {liquidity.getUserLpPercent()}%</p>
+            <p>我的流动性: {liqControl.getUserLpPercent()}%</p>
           </div>
           <div className="p-4 bg-gray-100 rounded">
             <p>总储备量:</p>

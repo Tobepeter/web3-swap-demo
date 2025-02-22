@@ -5,7 +5,7 @@ import { MockUniswapV2Pair__factory } from '../../contracts/typechain-types'
 import { contract } from './contract'
 import { tokenConfig } from '@/config/token'
 
-class Swap {
+class SwapControl {
   /**
    * 计算兑换后获得的代币数量
    */
@@ -46,4 +46,4 @@ class Swap {
   }
 }
 
-export const swap = new Swap()
+export const swapControl = new SwapControl()

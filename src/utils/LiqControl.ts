@@ -3,9 +3,9 @@ import { store } from '@/store/store'
 import type { Address } from 'viem'
 import { MockUniswapV2Pair__factory } from '../../contracts/typechain-types'
 import { contract } from './contract'
-import { tokenUtil } from './token-util'
+import { tokenUtil } from './TokenUtil'
 
-class Liquidity {
+class LiqControl {
   precision = 2
 
   /* 添加流动性 */
@@ -196,4 +196,4 @@ class Liquidity {
   }
 }
 
-export const liquidity = new Liquidity()
+export const liqControl = new LiqControl()

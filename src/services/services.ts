@@ -1,10 +1,10 @@
 import { store } from '@/store/store'
-import { tokenUtil } from '@/utils/token-util'
+import { tokenUtil } from '@/utils/TokenUtil'
 import { wallet } from '@/utils/wallet'
 import { contract } from '@/utils/contract'
 import { type Address } from 'viem'
-import { liquidity } from '@/utils/liquidity'
-import { swap } from '@/utils/swap'
+import { liqControl } from '@/utils/LiqControl'
+import { swapControl } from '@/utils/SwapControl'
 
 class Services {
   async fetchBalance(token: TokenType) {
@@ -47,13 +47,13 @@ class Services {
   }
 
   async addLiquidity(amount0: bigint, amount1: bigint) {
-    await liquidity.addLiquidity(amount0, amount1)
+    await liqControl.addLiquidity(amount0, amount1)
     await this.fetchLiquidity()
     await this.fetchBalances()
   }
 
   async removeLiquidity(amount: bigint) {
-    await liquidity.removeLiquidity(amount)
+    await liqControl.removeLiquidity(amount)
     await this.fetchLiquidity()
     await this.fetchBalances()
   }
@@ -70,9 +70,9 @@ class Services {
       return
     }
 
-    const userLiq = await liquidity.getLiquidity(address)
-    const totalLiq = await liquidity.getTotalLiquidity()
-    const { reserve0, reserve1 } = await liquidity.getReserves()
+    const userLiq = await liqControl.getLiquidity(address)
+    const totalLiq = await liqControl.getTotalLiquidity()
+    const { reserve0, reserve1 } = await liqControl.getReserves()
     const reserve0TK = tokenUtil.unit2tk(TK_ERC20, reserve0)
     const reserve1TK = tokenUtil.unit2tk(TK_USDC, reserve1)
 
@@ -91,11 +91,11 @@ class Services {
   }
 
   async getAmountOut(amountIn: bigint, token: TokenType) {
-    return swap.getAmountOut(amountIn, token)
+    return swapControl.getAmountOut(amountIn, token)
   }
 
   async swap(amountIn: bigint, amountOut: bigint, token: TokenType) {
-    await swap.swap(amountIn, amountOut, token)
+    await swapControl.swap(amountIn, amountOut, token)
     await this.fetchBalances()
   }
 

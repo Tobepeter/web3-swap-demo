@@ -19,16 +19,20 @@ import { useEffect, useState } from 'react'
  */
 export const Liquidity = () => {
   const address = store(state => state.address)
+  const isConnected = store(state => state.isConnected)
   const reserve0 = store(state => state.reserve0)
   const reserve1 = store(state => state.reserve1)
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   // 查询流动性信息
   const fetchLiquidityInfo = async () => {
-    if (isEmptyAddress(address)) return
+    if (!isConnected) return
+    setLoading(true)
     await services.fetchLiquidity()
+    setLoading(false)
   }
 
   useEffect(() => {
@@ -60,10 +64,10 @@ export const Liquidity = () => {
 
       {/* 操作按钮 */}
       <div className="space-x-4">
-        <Button type="primary" onClick={() => setIsAddModalOpen(true)}>
+        <Button type="primary" onClick={() => setIsAddModalOpen(true)} loading={loading} disabled={!isConnected}>
           添加流动性
         </Button>
-        <Button type="primary" danger onClick={() => setIsRemoveModalOpen(true)}>
+        <Button type="primary" danger onClick={() => setIsRemoveModalOpen(true)} loading={loading} disabled={!isConnected}>
           移除流动性
         </Button>
       </div>

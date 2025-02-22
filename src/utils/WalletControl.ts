@@ -16,6 +16,23 @@ class WalletControl {
     return accounts[0] as Address
   }
 
+  /** 检查钱包是否授权过 */
+  async checkWallet() {
+    let address: Address
+    try {
+      const accounts = (await window.ethereum.request({
+        method: 'eth_accounts',
+      })) as Address[]
+
+      if (accounts.length > 0) {
+        address = accounts[0]
+      }
+    } catch (error) {
+      // nothinig
+    }
+    return address
+  }
+
   /** 余额(wei) */
   async getWei(address: Address) {
     return contract.publicClient.getBalance({ address })

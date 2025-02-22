@@ -16,7 +16,9 @@ export interface StoreState {
   userLiq: bigint
   totalLiq: bigint
   reserve0: bigint
+  reserve0TK: string
   reserve1: bigint
+  reserve1TK: string
 
   txHash?: Hash // TODO: 做什么的？
 }
@@ -27,12 +29,16 @@ export const store = create<StoreState>()((set, get) => ({
   isConnected: false,
   chainId: 1,
   mockERC20: 0n,
-  mockERC20TK: '',
+  mockERC20TK: '0',
   mockUSDC: 0n,
-  mockUSDCTK: '',
+  mockUSDCTK: '0',
   txHash: undefined as Hash,
   userLiq: 0n,
   totalLiq: 0n,
   reserve0: 0n,
+  reserve0TK: '0',
   reserve1: 0n,
+  reserve1TK: '0',
+  maxAddLiq0: 0n,
+  maxAddLiq1: 0n,
 }))

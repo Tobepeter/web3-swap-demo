@@ -1,7 +1,8 @@
-import { addressConfig } from "@/address-config"
-import { Address } from "viem"
+import { addressConfig } from '@/address-config'
+import { Address } from 'viem'
 
-export const mockERC20 = 'MOCK_ERC20'
+// TODO: 这个全局变量太容易和本地变量冲突了
+export const mockERC20 = 'MockERC20'
 
 export const mockUSDC = 'MOCK_USDC'
 

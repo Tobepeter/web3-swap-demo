@@ -32,25 +32,32 @@ class GlobalUtil {
    * @desc 从模拟 vue elementUI 的 unplugin，虽然是挂window上的
    * @TODO 有空记得删掉一些react的导入，精简下代码
    */
-  private injectUnplugin() {
+  injectUnplugin() {
+    this.injectWin()
+    this.injectReactHooks()
+    this.injectUtils()
+    this.injectTokens()
+  }
+
+  injectWin() {
     const win = window as any
-
-    // -- win --
     ;(window as any).win = win
+  }
 
-    // -- react --
+  injectReactHooks() {
     win.useEffect = React.useEffect
     win.useState = React.useState
     win.useRef = React.useRef
     win.useCallback = React.useCallback
     win.useMemo = React.useMemo
-    win.useContext = React.useContext
+  }
 
-    // -- utils --
+  injectUtils() {
     win.sleep = sleep
     win.nextFrame = nextFrame
+  }
 
-    // -- token --
+  injectTokens() {
     win.mockERC20 = mockERC20
     win.mockUSDC = mockUSDC
     win.tokenConfig = tokenConfig

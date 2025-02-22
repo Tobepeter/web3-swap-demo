@@ -41,6 +41,20 @@ class Services {
     }
   }
 
+  async addLiquidity(amount0: bigint, amount1: bigint) {
+    await liquidity.addLiquidity(amount0, amount1)
+    await this.fetchLiquidity()
+    await this.fetchBalance(mockERC20)
+    await this.fetchBalance(mockUSDC)
+  }
+
+  async removeLiquidity(amount: bigint) {
+    await liquidity.removeLiquidity(amount)
+    await this.fetchLiquidity()
+    await this.fetchBalance(mockERC20)
+    await this.fetchBalance(mockUSDC)
+  }
+
   // TODO：需要适配数据变化，不过这个不怎么常用其实
   private onAccountChanged(accounts: string[]) {
     store.setState({ address: accounts[0] as Address })
@@ -56,13 +70,16 @@ class Services {
     const userLiq = await liquidity.getLiquidity(address)
     const totalLiq = await liquidity.getTotalLiquidity()
     const { reserve0, reserve1 } = await liquidity.getReserves()
-    // const tokens = await liquidity.getTokens()
+    const reserve0TK = tokenUtil.unit2tk(mockERC20, reserve0)
+    const reserve1TK = tokenUtil.unit2tk(mockUSDC, reserve1)
 
     store.setState({
       userLiq,
       totalLiq,
       reserve0,
       reserve1,
+      reserve0TK,
+      reserve1TK,
     })
   }
 

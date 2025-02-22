@@ -1,13 +1,13 @@
-name: Deploy to GitHub Pages
+name: deploy
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
-  deploy:
-    name: Deploy to GitHub Pages
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -16,10 +16,22 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '20.x'
+          cache: 'npm'
 
-      - name: Install dependencies
+      - name: Install root dependencies
         run: npm ci
+
+      - name: Install contract dependencies
+        working-directory: contracts
+        run: npm ci
+
+      - name: Generate contract types
+        working-directory: contracts
+        run: npm run typechain
+
+      # - name: Run linting
+      #   run: npm run lint
 
       - name: Build
         run: npm run build

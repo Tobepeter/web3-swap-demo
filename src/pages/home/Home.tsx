@@ -22,10 +22,15 @@ export const Home = () => {
   }
 
   const onMint = async () => {
-    setIsModalOpen(false)
     setIsLoading(true)
-    await services.mint(mintToken, address, amount.toString())
-    setIsLoading(false)
+    try {
+      await services.mint(mintToken, address, amount.toString())
+      setIsModalOpen(false)
+    } catch (error) {
+      message.error('添加代币失败')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const onRefresh = async () => {
@@ -38,6 +43,11 @@ export const Home = () => {
   const isConnected = !isEmptyAddress(address)
   const MockERC20BalanceStr = isConnected && !isLoading ? mockERC20TK : '-'
   const MockUSDCBalanceStr = isConnected && !isLoading ? mockUSDCTK : '-'
+
+  const onMintCancel = () => {
+    if (isLoading) return
+    setIsModalOpen(false)
+  }
 
   return (
     <div className="container mx-auto p-4">
@@ -81,9 +91,9 @@ export const Home = () => {
         </div>
       </div>
 
-      <Modal title={`添加${mintToken}代币（测试用）`} open={isModalOpen} onOk={onMint} onCancel={() => setIsModalOpen(false)}>
+      <Modal title={`添加${mintToken}代币（测试用）`} open={isModalOpen} onOk={onMint} onCancel={onMintCancel} confirmLoading={isLoading}>
         <div className="py-4">
-          <InputNumber defaultValue={100} value={amount} onChange={value => setAmount(value || 0)} style={{ width: '100%' }} />
+          <InputNumber defaultValue={100} value={amount} onChange={value => setAmount(value || 0)} style={{ width: '100%' }} disabled={isLoading} />
         </div>
       </Modal>
     </div>

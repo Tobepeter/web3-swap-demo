@@ -46,6 +46,10 @@ class HistoryClient {
 
     return unwatch
   }
+
+  getTransactionViewUrl(txHash: string) {
+    return `https://sepolia.etherscan.io/tx/${txHash}`
+  }
 }
 
 export type HistoryLog = Awaited<ReturnType<HistoryClient['getLogs']>>[number]

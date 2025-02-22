@@ -1,7 +1,9 @@
+import { TokenTag } from '@/components/TokenTag'
 import { services } from '@/services/services'
 import { store } from '@/store/store'
 import { tokenUtil } from '@/utils/TokenUtil'
-import { Button, Card, Form, Input, Select, Typography } from 'antd'
+import { SwapOutlined } from '@ant-design/icons'
+import { Button, Card, Input, Select, Space, Typography } from 'antd'
 import React, { useState } from 'react'
 
 export const Swap = () => {
@@ -9,12 +11,12 @@ export const Swap = () => {
   const TOKEN_OPTIONS = [
     { value: TK_ERC20, label: 'MockERC20' },
     { value: TK_USDC, label: 'MOCK_USDC' },
-  ]
+  ] as { value: TokenType; label: string }[]
   const mockERC20TK = store(state => state.mockERC20TK)
   const mockUSDCTK = store(state => state.mockUSDCTK)
 
-  const [payOpt, setPayOpt] = useState(TOKEN_OPTIONS[0].value)
-  const [receiveOpt, setReceiOpt] = useState(TOKEN_OPTIONS[1].value)
+  const [payOpt, setPayOpt] = useState<TokenType>(TOKEN_OPTIONS[0].value)
+  const [receiveOpt, setReceiOpt] = useState<TokenType>(TOKEN_OPTIONS[1].value)
   const [payAmount, setPayAmount] = useState('')
   const [receiveAmount, setReceiveAmount] = useState('')
   const [isCalculating, setIsCalculating] = useState(false)
@@ -59,10 +61,16 @@ export const Swap = () => {
     }, 200) as any
   }
 
+  const getOtherToken = (value: TokenType) => {
+    const val = TOKEN_OPTIONS.find(token => token.value !== value)?.value || ''
+    return val as TokenType
+  }
+
   /** 支付代币类型变化 */
   const onPayOptChange = async (value: string) => {
-    setPayOpt(value)
-    setReceiOpt(TOKEN_OPTIONS.find(token => token.value !== value)?.value || '')
+    setPayOpt(value as TokenType)
+    const targetToken = getOtherToken(value as TokenType)
+    setReceiOpt(targetToken)
 
     // 清空输入框
     setPayAmount('')
@@ -78,8 +86,9 @@ export const Swap = () => {
 
   /** 接收代币类型变化 */
   const onReceiveOptChange = (value: string) => {
-    setReceiOpt(value)
-    setPayOpt(TOKEN_OPTIONS.find(token => token.value !== value)?.value || '')
+    setReceiOpt(value as TokenType)
+    const targetToken = getOtherToken(value as TokenType)
+    setPayOpt(targetToken)
   }
 
   /** 交换 */
@@ -131,41 +140,40 @@ export const Swap = () => {
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">代币交易</h1>
       <Card>
-        <Form layout="vertical">
-          <Form.Item
-            label={
-              <div className="flex gap-2 justify-between w-full items-end">
-                <Typography.Title level={4} style={{ margin: 0 }}>
-                  支付
-                </Typography.Title>
-                <Typography.Text type="secondary">余额: {currentTK} </Typography.Text>
-              </div>
-            }
-            className="mb-4"
-          >
+        <div className="space-y-4">
+          {/* TODO: 代码重复度有点高 */}
+          <Space className="w-full" size={8} direction="vertical">
+            <div className="flex gap-2 justify-start w-full items-end">
+              <Typography.Title level={4} style={{ margin: 0 }}>
+                支付
+              </Typography.Title>
+              <Typography.Text type="secondary">余额: {currentTK} </Typography.Text>
+            </div>
             <Input type="number" placeholder="0" className="mb-2" value={payAmount} onChange={onPayAmountChange} max={maxToken} disabled={isExchanging} />
-            <Select className="w-full" value={payOpt} onChange={onPayOptChange} disabled={isExchanging} options={TOKEN_OPTIONS} />
-          </Form.Item>
+            <div className="flex gap-2 justify-start w-full items-center">
+              <Select className="min-w-1/2" value={payOpt} onChange={onPayOptChange} disabled={isExchanging} options={TOKEN_OPTIONS} />
+              <TokenTag token={payOpt} />
+            </div>
+          </Space>
 
-          <Form.Item
-            label={
-              <div className="flex gap-2 justify-between w-full items-end">
-                <Typography.Title level={4} style={{ margin: 0 }}>
-                  接收
-                </Typography.Title>
-                <Typography.Text type="secondary">当前余额: {targetTKBalance} </Typography.Text>
-              </div>
-            }
-            className="mb-4"
-          >
+          <Space className="w-full" size={8} direction="vertical">
+            <div className="flex gap-2 justify-start w-full items-end">
+              <Typography.Title level={4} style={{ margin: 0 }}>
+                接收
+              </Typography.Title>
+              <Typography.Text type="secondary">当前余额: {targetTKBalance} </Typography.Text>
+            </div>
             <Input type="number" placeholder="0.0" readOnly className="mb-2" value={receiveAmount} />
-            <Select className="w-full" value={receiveOpt} onChange={onReceiveOptChange} disabled={isExchanging} options={TOKEN_OPTIONS} />
-          </Form.Item>
+            <div className="flex gap-2 justify-start w-full items-center">
+              <Select className="min-w-1/2" value={receiveOpt} onChange={onReceiveOptChange} disabled={isExchanging} options={TOKEN_OPTIONS} />
+              <TokenTag token={receiveOpt} />
+            </div>
+          </Space>
 
-          <Button type="primary" block size="large" disabled={!exchangeEnable} loading={isLoading} onClick={onExchange}>
+          <Button type="primary" block icon={<SwapOutlined />} size="large" disabled={!exchangeEnable} loading={isLoading} onClick={onExchange}>
             交换
           </Button>
-        </Form>
+        </div>
       </Card>
     </div>
   )

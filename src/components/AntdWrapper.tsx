@@ -6,8 +6,11 @@ export const AntdWrapper = (props: PropsWithChildren<any>) => {
     <ConfigProvider
       theme={{
         token: {
-          colorPrimary: '#a78bfa', // violet-400
-          colorInfo: '#06b6d4', // cyan-500
+          colorPrimary: '#C27AFF',
+          colorWarning: '#ED6AFF',
+          colorInfo: '#AD46FF', // cyan-500
+          colorSuccess: '#C27AFF',
+          // colorInfoHover: '#a78bfa',
           borderRadius: 8,
         },
         algorithm: theme.defaultAlgorithm,

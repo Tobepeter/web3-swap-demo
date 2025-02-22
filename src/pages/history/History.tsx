@@ -1,11 +1,15 @@
-import { useEffect } from 'react'
-import { Card, List, Tag, Typography } from 'antd'
-import { historyStore } from '@/store/history'
+import { TokenTag } from '@/components/TokenTag'
 import { historyServices } from '@/services/HistoryServices'
-import { TransactionEvent } from '@/types/HistoryType'
-import { formatUnits } from 'viem'
+import { historyStore } from '@/store/history'
 import { store } from '@/store/store'
+import { TransactionEvent } from '@/types/HistoryType'
 import { isEmptyAddress } from '@/utils/common'
+import { historyClient } from '@/utils/HistoryClient'
+import { tokenUtil } from '@/utils/TokenUtil'
+import { MinusCircleOutlined, PlusCircleOutlined, SwapOutlined } from '@ant-design/icons'
+import { Card, List, Typography } from 'antd'
+import { useEffect } from 'react'
+import { formatUnits } from 'viem'
 
 const { Text, Link } = Typography
 
@@ -28,43 +32,74 @@ export const History = () => {
   const getEventTitle = (eventName: TransactionEvent) => {
     switch (eventName) {
       case TransactionEvent.Swap:
-        return <Tag color="blue">交易</Tag>
+        return (
+          <div className="flex items-center gap-2">
+            <SwapOutlined className="text-blue-500 text-xl" />
+            <span>交易</span>
+          </div>
+        )
       case TransactionEvent.AddLiquidity:
-        return <Tag color="green">添加流动性</Tag>
+        return (
+          <div className="flex items-center gap-2">
+            <PlusCircleOutlined className="text-green-500 text-xl" />
+            <span>添加流动性</span>
+          </div>
+        )
       case TransactionEvent.RemoveLiquidity:
-        return <Tag color="orange">移除流动性</Tag>
+        return (
+          <div className="flex items-center gap-2">
+            <MinusCircleOutlined className="text-orange-500 text-xl" />
+            <span>移除流动性</span>
+          </div>
+        )
     }
   }
 
   const getEventContent = (item: (typeof history)[0]) => {
+    const tagERC20 = <TokenTag token={TK_ERC20} />
+    const tagUSDC = <TokenTag token={TK_USDC} />
+
     if (item.swap) {
       const { amount0In, amount1In, amount0Out, amount1Out } = item.swap
-      if (amount0In > 0n) {
-        return (
-          <>
-            <Text>{formatUnits(amount0In, 18)} MockERC20</Text>
-            <Text className="mx-2">→</Text>
-            <Text>{formatUnits(amount1Out, 6)} MOCK_USDC</Text>
-          </>
-        )
-      } else {
-        return (
-          <>
-            <Text>{formatUnits(amount1In, 6)} MOCK_USDC</Text>
-            <Text className="mx-2">→</Text>
-            <Text>{formatUnits(amount0Out, 18)} MockERC20</Text>
-          </>
-        )
-      }
+
+      const isFromERC20 = amount0In > 0n
+      const fromToken = isFromERC20 ? TK_ERC20 : TK_USDC
+      const toToken = isFromERC20 ? TK_USDC : TK_ERC20
+      const fromAmount = isFromERC20 ? amount0In : amount1In
+      const toAmount = isFromERC20 ? amount1Out : amount0Out
+
+      const fromTag = isFromERC20 ? tagERC20 : tagUSDC
+      const toTag = isFromERC20 ? tagUSDC : tagERC20
+
+      const fromText = tokenUtil.unit2tk(fromToken, fromAmount)
+      const toText = tokenUtil.unit2tk(toToken, toAmount)
+
+      return (
+        <>
+          <div className="flex items-center gap-2">
+            <div>
+              {fromText} {fromTag}
+            </div>
+            <div className="mx-2">→</div>
+            <div>
+              {toText} {toTag}
+            </div>
+          </div>
+        </>
+      )
     }
 
     if (item.liquidity) {
       const { amount0, amount1 } = item.liquidity
       return (
         <>
-          <Text>{formatUnits(amount0, 18)} MockERC20</Text>
+          <Text>
+            {formatUnits(amount0, 18)} {tagERC20}
+          </Text>
           <Text className="mx-2">+</Text>
-          <Text>{formatUnits(amount1, 6)} MOCK_USDC</Text>
+          <Text>
+            {formatUnits(amount1, 6)} {tagUSDC}
+          </Text>
         </>
       )
     }
@@ -86,12 +121,12 @@ export const History = () => {
               <div className="w-full">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2">
-                    {getEventTitle(item.eventName)}
+                    <div className="min-w-40">{getEventTitle(item.eventName)}</div>
                     <div>{getEventContent(item)}</div>
                   </div>
-                  <Link href={`https://sepolia.etherscan.io/tx/${item.txHash}`} target="_blank">
+                  <Typography.Link className="mr-2" href={historyClient.getTransactionViewUrl(item.txHash)} target="_blank">
                     查看交易详情
-                  </Link>
+                  </Typography.Link>
                 </div>
               </div>
             </List.Item>

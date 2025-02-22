@@ -2,13 +2,14 @@ import { routes } from '@/routes/routes'
 import { services } from '@/services/services'
 import { store } from '@/store/store'
 import { walletControl } from '@/utils/WalletControl'
-import { Button } from 'antd'
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Button, Menu } from 'antd'
+import { useEffect, useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 
 export const NavBar = () => {
   const [isConnecting, setIsConnecting] = useState(false)
   const isConnected = store(state => state.isConnected)
+  const location = useLocation()
 
   // TODO: 增加自动连接功能
   const connectWallet = async () => {
@@ -60,21 +61,28 @@ export const NavBar = () => {
   return (
     <nav className="bg-white shadow-lg">
       <div className="container mx-auto px-4">
-        <div className="flex justify-between h-16">
-          <div className="flex space-x-8">
-            {routes[0].children.map(route => {
-              return (
-                <Link to={route.path} key={route.path} className="flex items-center px-2 py-2 text-gray-700 hover:text-gray-900">
-                  <span className="mr-1">{route.icon}</span>
+        <div className="flex justify-between h-14">
+          <Menu
+            mode="horizontal"
+            selectedKeys={[location.pathname]}
+            style={{
+              height: '100%',
+              lineHeight: '3.5rem',
+            }}
+            items={routes[0].children.map(route => ({
+              key: route.path,
+              icon: <span className="text-xl mr-1">{route.icon}</span>,
+              label: (
+                <Link to={route.path} className="!text-base font-medium">
                   {route.name}
                 </Link>
-              )
-            })}
-          </div>
+              ),
+            }))}
+          />
 
           {/* 钱包连接按钮 */}
           <div className="flex items-center">
-            <Button type="primary" onClick={connectWallet} loading={isConnecting}>
+            <Button type="primary" onClick={connectWallet} loading={isConnecting} size="large" className="text-base font-medium px-6">
               {connectText}
             </Button>
           </div>

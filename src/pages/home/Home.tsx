@@ -1,8 +1,9 @@
+import { TokenTag } from '@/components/TokenTag'
 import { services } from '@/services/services'
 import { store } from '@/store/store'
 import { isEmptyAddress } from '@/utils/common'
-import { PlusOutlined, SyncOutlined } from '@ant-design/icons'
-import { Button, InputNumber, Modal } from 'antd'
+import { CopyOutlined, PlusOutlined, SyncOutlined } from '@ant-design/icons'
+import { Button, InputNumber, Modal, Typography } from 'antd'
 import { useState } from 'react'
 
 export const Home = () => {
@@ -46,7 +47,10 @@ export const Home = () => {
           <h2 className="text-xl font-semibold mb-2">钱包信息</h2>
           {/* 钱包地址显示区域 */}
           <div className="p-4 bg-gray-100 rounded">
-            <p>钱包地址: {addressStr}</p>
+            <div className="flex items-center gap-2">
+              <span>地址</span>
+              <Typography.Text copyable={{ tooltips: ['复制', '已复制'] }}>{addressStr}</Typography.Text>
+            </div>
           </div>
         </div>
 
@@ -60,15 +64,17 @@ export const Home = () => {
           {/* 代币余额显示区域 */}
           <div className="space-y-2">
             <div className="p-4 bg-gray-100 rounded flex justify-between items-center">
-              <p>
-                {TK_ERC20}: {MockERC20BalanceStr}
-              </p>
+              <div className="flex items-center gap-2">
+                <TokenTag token={TK_ERC20} />
+                {MockERC20BalanceStr}
+              </div>
               <Button type="primary" icon={<PlusOutlined />} onClick={() => handleOpenModal(TK_ERC20)} size="small" disabled={!isConnected} />
             </div>
             <div className="p-4 bg-gray-100 rounded flex justify-between items-center">
-              <p>
-                {TK_USDC}: {MockUSDCBalanceStr}
-              </p>
+              <div className="flex items-center gap-2">
+                <TokenTag token={TK_USDC} />
+                {MockUSDCBalanceStr}
+              </div>
               <Button type="primary" icon={<PlusOutlined />} onClick={() => handleOpenModal(TK_USDC)} size="small" disabled={!isConnected} />
             </div>
           </div>

@@ -1,10 +1,11 @@
+import { TokenTag } from '@/components/TokenTag'
 import { AddLiquidityModal } from '@/pages/liquidity/components/AddLiquidityModal'
 import { RemoveLiquidityModal } from '@/pages/liquidity/components/RemoveLiquidityModal'
 import { services } from '@/services/services'
 import { store } from '@/store/store'
-import { isEmptyAddress } from '@/utils/common'
 import { liqControl } from '@/utils/LiqControl'
 import { tokenUtil } from '@/utils/TokenUtil'
+import { MinusOutlined, PlusOutlined } from '@ant-design/icons'
 import { Button } from 'antd'
 import { useEffect, useState } from 'react'
 
@@ -45,29 +46,31 @@ export const Liquidity = () => {
 
       {/* 流动性信息展示 */}
       <div className="bg-white rounded-lg shadow p-6 mb-4">
-        <h2 className="text-xl font-semibold mb-4">流动性信息</h2>
+        <h2 className="text-xl font-semibold mb-4">信息</h2>
         <div className="space-y-2">
           <div className="p-4 bg-gray-100 rounded">
             <p>我的流动性: {liqControl.getUserLpPercent()}%</p>
           </div>
           <div className="p-4 bg-gray-100 rounded">
-            <p>总储备量:</p>
-            <p>
-              {TK_ERC20}: {tokenUtil.unit2tk(TK_ERC20, reserve0)}
-            </p>
-            <p>
-              {TK_USDC}: {tokenUtil.unit2tk(TK_USDC, reserve1)}
-            </p>
+            <p className="bold">总储备量:</p>
+            <div className="flex gap-2 mt-2 ">
+              <span className="min-w-20">{tokenUtil.unit2tk(TK_ERC20, reserve0)}</span>
+              <TokenTag token={TK_ERC20} />
+            </div>
+            <div className="flex gap-2 mt-2">
+              <span className="min-w-20">{tokenUtil.unit2tk(TK_USDC, reserve1)}</span>
+              <TokenTag token={TK_USDC} />
+            </div>
           </div>
         </div>
       </div>
 
       {/* 操作按钮 */}
       <div className="space-x-4">
-        <Button type="primary" onClick={() => setIsAddModalOpen(true)} loading={loading} disabled={!isConnected}>
+        <Button type="primary" onClick={() => setIsAddModalOpen(true)} loading={loading} disabled={!isConnected} icon={<PlusOutlined />}>
           添加流动性
         </Button>
-        <Button type="primary" danger onClick={() => setIsRemoveModalOpen(true)} loading={loading} disabled={!isConnected}>
+        <Button type="primary" onClick={() => setIsRemoveModalOpen(true)} loading={loading} disabled={!isConnected} icon={<MinusOutlined />}>
           移除流动性
         </Button>
       </div>

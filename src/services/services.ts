@@ -129,10 +129,22 @@ class Services {
 
     // 连接后自动拉取数据
     if (isConnected) {
-      await this.fetchBalances()
-      await this.fetchLiquidity()
-      this.listenAccount()
+      await this.fetchBaseInfo()
     }
+  }
+
+  async autoDetectWallet() {
+    const address = await walletControl.checkWallet()
+    if (address) {
+      store.setState({ address, isConnected: true })
+      await this.fetchBaseInfo()
+    }
+  }
+
+  private async fetchBaseInfo() {
+    await this.fetchBalances()
+    await this.fetchLiquidity()
+    this.listenAccount()
   }
 }
 

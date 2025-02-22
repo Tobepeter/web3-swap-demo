@@ -20,7 +20,7 @@ const App = () => {
       const address = store.getState().address
       if (isEmptyAddress(address)) return
 
-      historyServices.init(address)
+      historyServices.init()
     }
   }, [])
 

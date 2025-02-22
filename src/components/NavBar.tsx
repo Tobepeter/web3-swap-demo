@@ -38,10 +38,12 @@ export const NavBar = () => {
   }
 
   const autoDetectWallet = async () => {
-    const address = await walletControl.checkWallet()
-    if (address) {
-      store.setState({ address, isConnected: true })
-    }
+    if (isConnected) return
+    setIsConnecting(true)
+    await services.autoDetectWallet().catch(() => {
+      // nothinig
+    })
+    setIsConnecting(false)
   }
 
   useEffect(() => {

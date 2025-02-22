@@ -3,9 +3,9 @@ import { store } from '@/store/store'
 import { isEmptyAddress } from '@/utils/common'
 import { PlusOutlined, SyncOutlined } from '@ant-design/icons'
 import { Button, InputNumber, Modal } from 'antd'
-import React, { useState } from 'react'
+import { useState } from 'react'
 
-export const HomePage: React.FC = () => {
+export const Home = () => {
   const address = store(state => state.address)
   const mockERC20TK = store(state => state.mockERC20TK)
   const mockUSDCTK = store(state => state.mockUSDCTK)

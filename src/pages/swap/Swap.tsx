@@ -4,7 +4,7 @@ import { tokenUtil } from '@/utils/token-util'
 import { Button, Card, Form, Input, Select, Typography } from 'antd'
 import React, { useState } from 'react'
 
-export const TradingPage: React.FC = () => {
+export const Swap = () => {
   // TODO: 感觉变量还是不能放全局，需要导入
   const TOKEN_OPTIONS = [
     { value: mockERC20, label: 'MockERC20' },

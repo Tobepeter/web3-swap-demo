@@ -1,7 +1,8 @@
+import { routes } from '@/routes/routes'
 import { services } from '@/services/services'
 import { store } from '@/store/store'
 import { wallet } from '@/utils/wallet'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
 export const NavBar = () => {
@@ -32,18 +33,13 @@ export const NavBar = () => {
       <div className="container mx-auto px-4">
         <div className="flex justify-between h-16">
           <div className="flex space-x-8">
-            <Link to="/" className="flex items-center px-2 py-2 text-gray-700 hover:text-gray-900">
-              首页
-            </Link>
-            <Link to="/trading" className="flex items-center px-2 py-2 text-gray-700 hover:text-gray-900">
-              交易
-            </Link>
-            <Link to="/liquidity" className="flex items-center px-2 py-2 text-gray-700 hover:text-gray-900">
-              流动性
-            </Link>
-            <Link to="/history" className="flex items-center px-2 py-2 text-gray-700 hover:text-gray-900">
-              历史记录
-            </Link>
+            {routes[0].children.map(route => {
+              return (
+                <Link to={route.path} key={route.path} className="flex items-center px-2 py-2 text-gray-700 hover:text-gray-900">
+                  {route.name}
+                </Link>
+              )
+            })}
           </div>
 
           {/* 钱包连接按钮 */}

@@ -1,12 +1,12 @@
-import { AddLiquidityModal } from '@/components/AddLiquidityModal'
-import { RemoveLiquidityModal } from '@/components/RemoveLiquidityModal'
+import { AddLiquidityModal } from '@/pages/liquidity/components/AddLiquidityModal'
+import { RemoveLiquidityModal } from '@/pages/liquidity/components/RemoveLiquidityModal'
 import { services } from '@/services/services'
 import { store } from '@/store/store'
 import { isEmptyAddress } from '@/utils/common'
 import { liquidity } from '@/utils/liquidity'
 import { tokenUtil } from '@/utils/token-util'
 import { Button } from 'antd'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 /**
  * 流动性管理
@@ -17,7 +17,7 @@ import React, { useEffect, useState } from 'react'
  * 4. 添加流动性，弹窗形式，只能输入整数，两边输入联动响应（但是都不能超过余额）
  * 5. 移除流动性，弹窗形式，输入流动性，自动计算出代币数量
  */
-export const LiquidityPage: React.FC = () => {
+export const Liquidity = () => {
   const address = store(state => state.address)
   const reserve0 = store(state => state.reserve0)
   const reserve1 = store(state => state.reserve1)

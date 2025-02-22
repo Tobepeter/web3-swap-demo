@@ -1,10 +1,9 @@
 import { store } from '@/store/store'
-import { tokenUtil } from '@/utils/TokenUtil'
-import { walletControl } from '@/utils/WalletControl'
-import { contract } from '@/utils/contract'
-import { type Address } from 'viem'
 import { liqControl } from '@/utils/LiqControl'
 import { swapControl } from '@/utils/SwapClient'
+import { tokenUtil } from '@/utils/TokenUtil'
+import { walletControl } from '@/utils/WalletControl'
+import { type Address } from 'viem'
 
 /**
  * 服务层

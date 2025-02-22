@@ -30,6 +30,7 @@ export const Swap = () => {
     const payToken = payOpt as TokenType
     const receiveToken = receiveOpt as TokenType
     const amountIn = tokenUtil.tk2unit(payToken, payAmount)
+    // TODO: 是否使用本地计算模式？
     const amountOut = await services.getAmountOut(amountIn, payToken)
 
     // 如果有定时器，则不更新
@@ -90,6 +91,14 @@ export const Swap = () => {
     const amountOut = await services.getAmountOut(amountIn, payToken)
 
     console.log(`swap 支付 ${payAmount} ${payToken}，期望得到 ${receiveAmount} ${receiveToken}`)
+
+    // 计算预期结果
+    const state = store.getState()
+    const balanceIn = payToken === TK_ERC20 ? state.mockERC20 : state.mockUSDC
+    const balanceOut = receiveToken === TK_ERC20 ? state.mockERC20 : state.mockUSDC
+    const expectIn = tokenUtil.unit2tk(payToken, balanceIn - amountIn)
+    const expectOut = tokenUtil.unit2tk(receiveToken, balanceOut + amountOut)
+    console.log(`swap 预期余额 ${expectIn} ${payToken}，期望得到 ${expectOut} ${receiveToken}`)
 
     // TODO: 目前交换后貌似不对
     // console.log(`swap 预期余额 ${payAmount} ${payToken}，期望得到 ${receiveAmount} ${receiveToken}`)

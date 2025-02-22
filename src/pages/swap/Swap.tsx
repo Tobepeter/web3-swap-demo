@@ -84,23 +84,29 @@ export const Swap = () => {
 
   /** 交换 */
   const onExchange = async () => {
+    // TODO: 异步问题可能要考虑好路由卸载
+
     setIsExchanging(true)
     const payToken = payOpt as TokenType
     const receiveToken = receiveOpt as TokenType
     const amountIn = tokenUtil.tk2unit(payToken, payAmount)
-    const amountOut = await services.getAmountOut(amountIn, payToken)
 
-    console.log(`swap 支付 ${payAmount} ${payToken} => ${receiveAmount} ${receiveToken}`)
+    try {
+      const amountOut = await services.getAmountOut(amountIn, payToken)
+      console.log(`swap 支付 ${payAmount} ${payToken} => ${receiveAmount} ${receiveToken}`)
 
-    // 计算预期结果
-    const state = store.getState()
-    const balanceIn = payToken === TK_ERC20 ? state.mockERC20 : state.mockUSDC
-    const balanceOut = receiveToken === TK_ERC20 ? state.mockERC20 : state.mockUSDC
-    const expectIn = tokenUtil.unit2tk(payToken, balanceIn - amountIn)
-    const expectOut = tokenUtil.unit2tk(receiveToken, balanceOut + amountOut)
-    console.log(`swap 预期余额 ${expectIn} ${payToken}, ${expectOut} ${receiveToken}`)
+      // 计算预期结果
+      const state = store.getState()
+      const balanceIn = payToken === TK_ERC20 ? state.mockERC20 : state.mockUSDC
+      const balanceOut = receiveToken === TK_ERC20 ? state.mockERC20 : state.mockUSDC
+      const expectIn = tokenUtil.unit2tk(payToken, balanceIn - amountIn)
+      const expectOut = tokenUtil.unit2tk(receiveToken, balanceOut + amountOut)
+      console.log(`swap 预期余额 ${expectIn} ${payToken}, ${expectOut} ${receiveToken}`)
 
-    await services.swap(amountIn, amountOut, payToken)
+      await services.swap(amountIn, amountOut, payToken)
+    } catch (error) {
+      message.error('交换失败')
+    }
     setIsExchanging(false)
 
     // 清空表单
@@ -108,8 +114,16 @@ export const Swap = () => {
     setReceiveAmount('')
   }
 
-  /** 是否可以交换 */
-  const exchangeEnable = payAmount && Number(payAmount) > 0 && Number(payAmount) <= Number(currentTK)
+  const payAmountNum = Number(payAmount)
+  const receiveAmountNum = Number(receiveAmount)
+
+  /**
+   * 是否可以交换
+   * 1. 支付金额大于0
+   * 2. 支付金额小于等于当前余额
+   * 3. 接收金额大于0（货币如果高精度传递小量，兑换的另一方会计算出0） TODO：不知道是bug么，有空看看
+   */
+  const exchangeEnable = payAmountNum > 0 && payAmountNum <= Number(currentTK) && receiveAmountNum > 0
 
   const isLoading = isCalculating || isExchanging
 
@@ -130,13 +144,7 @@ export const Swap = () => {
             className="mb-4"
           >
             <Input type="number" placeholder="0" className="mb-2" value={payAmount} onChange={onPayAmountChange} max={maxToken} disabled={isExchanging} />
-            <Select className="w-full" value={payOpt} onChange={onPayOptChange}>
-              {TOKEN_OPTIONS.map(option => (
-                <Select.Option key={option.value} value={option.value}>
-                  {option.label}
-                </Select.Option>
-              ))}
-            </Select>
+            <Select className="w-full" value={payOpt} onChange={onPayOptChange} disabled={isExchanging} options={TOKEN_OPTIONS} />
           </Form.Item>
 
           <Form.Item
@@ -151,13 +159,7 @@ export const Swap = () => {
             className="mb-4"
           >
             <Input type="number" placeholder="0.0" readOnly className="mb-2" value={receiveAmount} />
-            <Select className="w-full" value={receiveOpt} onChange={onReceiveOptChange}>
-              {TOKEN_OPTIONS.map(option => (
-                <Select.Option key={option.value} value={option.value}>
-                  {option.label}
-                </Select.Option>
-              ))}
-            </Select>
+            <Select className="w-full" value={receiveOpt} onChange={onReceiveOptChange} disabled={isExchanging} options={TOKEN_OPTIONS} />
           </Form.Item>
 
           <Button type="primary" block size="large" disabled={!exchangeEnable} loading={isLoading} onClick={onExchange}>

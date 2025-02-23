@@ -1,50 +1,34 @@
-# React + TypeScript + Vite
+# 合约开发
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+contracts 目录下，使用 solidity 语言 + hardhat 框架
 
-Currently, two official plugins are available:
+支持一键 deploy 脚本，部署后生成的合约地址，自动复制到前端项目中使用
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+contracts 使用额外使用 viem 插件，因为客户端用了 viem（代替 ethers.js）
 
-## Expanding the ESLint configuration
+contracts 中 typechain 是类型文件，abi 接口，供前端使用
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+# 前端开发
 
-- Configure the top-level `parserOptions` property like this:
+使用的 vite + react + react-router + tailwindcss + typescript + prettier + eslint
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+组件库使用了 antd
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+使用 vitest 自动化测试框架
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+使用 zustand 状态管理
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+钱包协议使用 metaMask
+
+使用 viem 代替 ethers 处理货币运算，client RPC（最大特点用了原生的 bigInt 代替 ethers.BigNumber）
+
+使用 sepolia 测试网络
+
+使用 github action 自动化部署
+
+# 项目结构
+
+- /contracts 合约开发
+- /src 前端开发
+- /.github 自动化部署
+- /docs 文档，以及git提示学习记录

@@ -5,6 +5,7 @@ import prettier from 'prettier'
 import { MockERC20, MockUSDC, MockUniswapV2Pair } from '../typechain-types'
 
 // TODO: 有空看看 import 的方式获取路径，不然这里重构调整下位置会有问题
+// TODO: 换个名字，AddressConfig.ts
 const tsConfigPath = path.join(__dirname, '../../src/address-config.ts')
 
 /**
@@ -139,40 +140,40 @@ async function main() {
   await addInitialLiquidity(mockERC20, mockUSDC, mockUniswapV2Pair)
 
   // 只在非本地网络（如 sepolia）上等待确认和验证合约
-  if (network.name !== 'hardhat' && network.name !== 'localhost') {
-    // 等待区块确认
-    console.log('\n等待区块确认...')
-    await mockERC20.deploymentTransaction()?.wait(5)
-    await mockUSDC.deploymentTransaction()?.wait(5)
-    await mockUniswapV2Pair.deploymentTransaction()?.wait(5)
+  // if (network.name !== 'hardhat' && network.name !== 'localhost') {
+  //   // 等待区块确认
+  //   console.log('\n等待区块确认...')
+  //   await mockERC20.deploymentTransaction()?.wait(5)
+  //   await mockUSDC.deploymentTransaction()?.wait(5)
+  //   await mockUniswapV2Pair.deploymentTransaction()?.wait(5)
 
-    // 验证合约
+  //   // 验证合约
 
-    // TODO: 下面的代码是AI生成的，目前有error
-    // 合约验证失败: NetworkRequestError: A network request failed. This is an error from the block explorer, not Hardhat. Error: read ECONNRESET
+  //   // TODO: 下面的代码是AI生成的，目前有error
+  //   // 合约验证失败: NetworkRequestError: A network request failed. This is an error from the block explorer, not Hardhat. Error: read ECONNRESET
 
-    console.log('\n开始验证合约...')
-    try {
-      await run('verify:verify', {
-        address: await mockERC20.getAddress(),
-        constructorArguments: [],
-      })
+  //   console.log('\n开始验证合约...')
+  //   try {
+  //     await run('verify:verify', {
+  //       address: await mockERC20.getAddress(),
+  //       constructorArguments: [],
+  //     })
 
-      await run('verify:verify', {
-        address: await mockUSDC.getAddress(),
-        constructorArguments: [],
-      })
+  //     await run('verify:verify', {
+  //       address: await mockUSDC.getAddress(),
+  //       constructorArguments: [],
+  //     })
 
-      await run('verify:verify', {
-        address: await mockUniswapV2Pair.getAddress(),
-        constructorArguments: [await mockERC20.getAddress(), await mockUSDC.getAddress()],
-      })
+  //     await run('verify:verify', {
+  //       address: await mockUniswapV2Pair.getAddress(),
+  //       constructorArguments: [await mockERC20.getAddress(), await mockUSDC.getAddress()],
+  //     })
 
-      console.log('合约验证完成！')
-    } catch (error) {
-      console.error('合约验证失败:', error)
-    }
-  }
+  //     console.log('合约验证完成！')
+  //   } catch (error) {
+  //     console.error('合约验证失败:', error)
+  //   }
+  // }
 }
 
 main()

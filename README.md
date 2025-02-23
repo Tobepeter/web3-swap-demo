@@ -1,3 +1,10 @@
+# 项目运行
+
+```bash
+npm install
+npm run dev
+```
+
 # 合约开发
 
 contracts 目录下，使用 solidity 语言 + hardhat 框架

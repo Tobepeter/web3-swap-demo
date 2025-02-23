@@ -1,5 +1,7 @@
 {
   "name": "hardhat-project",
+  "author": "Tobe",
+  "email": "583590744@qq.com",
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
     "@nomicfoundation/hardhat-viem": "^2.0.6",

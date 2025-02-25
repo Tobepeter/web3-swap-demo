@@ -11,14 +11,6 @@ import { swapControl } from './SwapClient'
 class GlobalUtil {
   init() {
     this.injectUnplugin()
-    this.injectDevConsole()
-  }
-
-  private injectDevConsole() {
-    win.React = React
-    win.store = store
-    win.wallet = walletControl
-    win.historyServices = historyServices
   }
 
   /**

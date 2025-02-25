@@ -1,13 +1,24 @@
 import { store } from '@/store/store'
 import { swapControl } from './SwapClient'
 import { tokenUtil } from './TokenUtil'
+import React from 'react'
+import { walletControl } from './WalletControl'
+import { historyServices } from '@/services/HistoryServices'
 
 export const isDev = process.env.NODE_ENV === 'development'
 
 class DebugUtil {
   init() {
     if (!isDev) return
+    this.injectDevConsole()
+  }
+
+  private injectDevConsole() {
     win.debugUtil = this
+    win.React = React
+    win.store = store
+    win.walletControl = walletControl
+    win.historyServices = historyServices
   }
 
   printBalance() {

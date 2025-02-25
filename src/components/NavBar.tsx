@@ -12,7 +12,12 @@ export const NavBar = () => {
   const location = useLocation()
 
   // TODO: 增加自动连接功能
-  const connectWallet = async () => {
+  const onClickWalletButton = async () => {
+    if (walletControl.wagmi.enable) {
+      walletControl.wagmi.open()
+      return
+    }
+
     if (isConnected) {
       message.info('已连接')
       return
@@ -56,6 +61,10 @@ export const NavBar = () => {
     connectText = '钱包连接中...'
   } else if (isConnected) {
     connectText = '钱包已连接'
+
+    if (walletControl.wagmi.enable) {
+      connectText = '打开wagmi'
+    }
   }
 
   return (
@@ -82,7 +91,7 @@ export const NavBar = () => {
 
           {/* 钱包连接按钮 */}
           <div className="flex items-center">
-            <Button type="primary" onClick={connectWallet} loading={isConnecting} size="large" className="text-base font-medium px-6">
+            <Button type="primary" onClick={onClickWalletButton} loading={isConnecting} size="large" className="text-base font-medium px-6">
               {connectText}
             </Button>
           </div>

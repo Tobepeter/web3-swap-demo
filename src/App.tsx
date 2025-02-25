@@ -1,13 +1,16 @@
+import { useWeb3Modal } from '@web3modal/wagmi/react'
 import { App as AntdApp } from 'antd'
 import { RouterProvider } from 'react-router-dom'
+import { WagmiProvider } from 'wagmi'
 import { AntdWrapper } from './components/AntdWrapper'
 import { router } from './routes/routes'
 import { contract } from './utils/contract'
-import { globalUtil } from './utils/global-util'
-import { store } from './store/store'
-import { isEmptyAddress } from './utils/common'
-import { historyServices } from './services/HistoryServices'
 import { debugUtil } from './utils/DebugUtil'
+import { globalUtil } from './utils/global-util'
+import { walletControl } from './utils/WalletControl'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+
+const queryClient = new QueryClient()
 
 const App = () => {
   const { message, modal } = AntdApp.useApp()
@@ -15,13 +18,15 @@ const App = () => {
   globalUtil.injectAntd(message, modal)
   contract.init()
 
-  useEffect(() => {
-    win.testHistory = () => {
-      const address = store.getState().address
-      if (isEmptyAddress(address)) return
+  walletControl.init()
+  const { open: openWeb3Modal } = useWeb3Modal()
+  walletControl.wagmi.open = openWeb3Modal
+  walletControl.wagmi.useAccountListener()
 
-      historyServices.init()
-    }
+  useEffect(() => {
+    // win.test = () => {
+    //   openWeb3Modal()
+    // }
   }, [])
 
   return <RouterProvider router={router} />
@@ -29,9 +34,11 @@ const App = () => {
 
 const WrapApp = () => {
   return (
-    <AntdWrapper>
-      <App />
-    </AntdWrapper>
+    <WagmiProvider config={walletControl.wagmi.config}>
+      <AntdWrapper>
+        <App />
+      </AntdWrapper>
+    </WagmiProvider>
   )
 }
 

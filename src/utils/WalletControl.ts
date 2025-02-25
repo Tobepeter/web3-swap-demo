@@ -2,9 +2,15 @@ import { store } from '@/store/store'
 import { Address, formatEther } from 'viem'
 import { MockERC20__factory, MockUSDC__factory } from '../../contracts/typechain-types'
 import { contract } from './contract'
+import { Wagmi, WagmiEvent } from './Wagmi'
 
 class WalletControl {
   metaMaskInstallUrl = 'https://chromewebstore.google.com/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn'
+  wagmi = new Wagmi()
+
+  init() {
+    this.wagmi.initWeb3Modal()
+  }
 
   isMetaMaskValid() {
     return window.ethereum?.isMetaMask
@@ -12,14 +18,54 @@ class WalletControl {
 
   /** 连接钱包 */
   async connectWallet() {
-    const accounts = await window.ethereum.request({
-      method: 'eth_requestAccounts',
-    })
-    return accounts[0] as Address
+    if (this.wagmi.enable) {
+      this.wagmi.open()
+
+      const promise = new Promise<Address>((resolve, reject) => {
+        this.wagmi.mitt.on(WagmiEvent.Connect, resolve)
+        this.wagmi.mitt.on(WagmiEvent.Disconnect, reject)
+      })
+      return promise
+    }
+
+    // TODO: 这个方案后续要废弃了
+    // 在 EIP-6963 之前，Web3 应用面临以下问题
+    // 多个钱包扩展会争夺同一个全局对象（如 window.ethereum），导致只有一个钱包能够被检测到
+    // EIP-6963 全称为"Multi Injected Provider Discovery"（多注入提供者发现）
+    // 它提供了一种标准化的方法，使 dApp（去中心化应用）能够发现和连接到用户浏览器中安装的多个钱包扩展
+
+    try {
+      const accounts = await window.ethereum.request({
+        method: 'eth_requestAccounts',
+      })
+      return accounts[0] as Address
+    } catch (error) {
+      console.error('连接钱包失败:', error)
+      throw error
+    }
+  }
+
+  /** 退出 */
+  async disconnectWallet() {
+    try {
+      await window.ethereum.request({
+        method: 'eth_accounts',
+        params: [],
+      })
+      return true
+    } catch (error) {
+      console.error('退出钱包失败:', error)
+      throw error
+    }
   }
 
   /** 检查钱包是否授权过 */
   async checkWallet() {
+    // wagami 会自动连接
+    if (this.wagmi.enable) {
+      return
+    }
+
     let address: Address
     try {
       const accounts = (await window.ethereum.request({

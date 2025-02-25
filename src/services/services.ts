@@ -99,10 +99,24 @@ class Services {
     return swapControl.getAmountOut(amountIn, token)
   }
 
-  async swap(amountIn: bigint, amountOut: bigint, token: TokenType) {
-    await swapControl.swap(amountIn, amountOut, token)
+  async swap(amountIn: bigint, amountOut: bigint, token: TokenType, slippage: number) {
+    const prevState = store.getState()
+    const balanceOut = token === TK_ERC20 ? prevState.mockUSDC : prevState.mockERC20
+
+    // TODO: 精度很多地方都是写死的，看看如何优化
+    const slippagePrecision = 2
+    const slippageBigInt = BigInt(slippage * 10 ** slippagePrecision)
+    await swapControl.swap(amountIn, amountOut, token, slippageBigInt)
     await this.fetchBalances()
     message.success('交换成功')
+
+    const newState = store.getState()
+    const newBalanceOut = token === TK_ERC20 ? newState.mockUSDC : newState.mockERC20
+    const actualAmountOut = newBalanceOut - balanceOut
+    const extraPrecision = 1 // 除法需要额外一个精度
+    const accountSlippageBigInt = ((amountOut - actualAmountOut) * BigInt(10 ** (2 + slippagePrecision + extraPrecision))) / amountOut
+    const accountSlippage = Number(accountSlippageBigInt) / 10 ** (slippagePrecision + extraPrecision)
+    console.log(`swap 预期滑点 ${slippage}%, 实际滑点 ${accountSlippage}%`)
   }
 
   unlistenAccount() {

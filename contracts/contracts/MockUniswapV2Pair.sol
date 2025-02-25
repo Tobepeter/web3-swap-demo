@@ -73,13 +73,30 @@ contract MockUniswapV2Pair {
     }
 
     // 交换代币
-    function swap(uint256 amount0In, uint256 amount1In, uint256 amount0Out, uint256 amount1Out, address to) external {
+    function swap(
+        uint256 amount0In,
+        uint256 amount1In,
+        uint256 amount0Out,
+        uint256 amount1Out,
+        address to,
+        uint256 slippage // 精度2，0.01%其实会放大1e4倍
+    ) external {
+        // 数量检查
+        require(amount0In > 0 || amount1In > 0, "Insufficient input amount");
         require(amount0Out > 0 || amount1Out > 0, "Insufficient output amount");
+
+        // 只允许单向
+        require(
+            (amount0In > 0 && amount1Out > 0 && amount0Out == 0 && amount1In == 0) || 
+            (amount1In > 0 && amount0Out > 0 && amount0In == 0 && amount1Out == 0),
+            "Invalid swap direction"
+        );
+
+        // 接收者检查
         require(to != token0 && to != token1, "Invalid recipient");
 
-        // TODO: 可以考虑一次只能交换一个方向
-        // TODO: 手续抽取为const
-        // TODO: 增加适当的滑点
+        // 滑点检查
+        require(slippage <= 5000, "Slippage too high"); // 最大允许 50% 滑点
 
         // 提前存入所有代币
         if (amount0In > 0) {
@@ -89,18 +106,27 @@ contract MockUniswapV2Pair {
             IERC20(token1).safeTransferFrom(msg.sender, address(this), amount1In);
         }
 
-        // 计算实际输入金额（考虑0.3%手续费）
-        uint256 amount0InAfterFee = amount0In > 0 ? (amount0In * 997) / 1000 : 0;
-        uint256 amount1InAfterFee = amount1In > 0 ? (amount1In * 997) / 1000 : 0;
+        // 滑点检查
+        if (amount0In > 0 && amount1Out > 0) {
+            uint256 actualOut = getAmountOut(amount0In, token0);
+            require(actualOut >= (amount1Out * (10000 - slippage)) / 10000, "Slippage exceeded");
+            amount1Out = actualOut;
+        } else if (amount1In > 0 && amount0Out > 0) {
+            uint256 actualOut = getAmountOut(amount1In, token1);
+            require(actualOut >= (amount0Out * (10000 - slippage)) / 10000, "Slippage exceeded");
+            amount0Out = actualOut;
+        }
+
+        // TODO: 滑点检查一定会计算一个合理的输出值，下面的k值是否可以不用计算了？
 
         // 检查 k 值是否保持不变或增加（使用扣除手续费后的金额）
-        uint256 balance0 = reserve0 + amount0InAfterFee - amount0Out;
-        uint256 balance1 = reserve1 + amount1InAfterFee - amount1Out;
+        uint256 balance0 = reserve0 + amount0In - amount0Out;
+        uint256 balance1 = reserve1 + amount1In - amount1Out;
         require(balance0 * balance1 >= reserve0 * reserve1, "K value must not decrease");
 
         // 更新储备量（包括手续费）
-        reserve0 = reserve0 + amount0InAfterFee - amount0Out;
-        reserve1 = reserve1 + amount1InAfterFee - amount1Out;
+        reserve0 = balance0;
+        reserve1 = balance1;
 
         if (amount0Out > 0) {
             IERC20(token0).safeTransfer(to, amount0Out);
@@ -113,7 +139,7 @@ contract MockUniswapV2Pair {
     }
 
     // 获取当前汇率
-    function getAmountOut(uint256 amountIn, address tokenIn) external view returns (uint256) {
+    function getAmountOut(uint256 amountIn, address tokenIn) public view returns (uint256) {
         require(tokenIn == token0 || tokenIn == token1, "Invalid token");
         
         if (reserve0 == 0 || reserve1 == 0) return 0;
@@ -121,6 +147,7 @@ contract MockUniswapV2Pair {
         uint256 reserveIn = tokenIn == token0 ? reserve0 : reserve1;
         uint256 reserveOut = tokenIn == token0 ? reserve1 : reserve0;
 
+        // TODO: 手续抽取为const?
         uint256 amountInWithFee = amountIn * 997; // 0.3% 手续费
         uint256 numerator = amountInWithFee * reserveOut;
         uint256 denominator = reserveIn * 1000 + amountInWithFee;

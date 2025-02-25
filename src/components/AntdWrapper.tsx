@@ -2,6 +2,7 @@ import { App, ConfigProvider, theme } from 'antd'
 import { PropsWithChildren } from 'react'
 
 export const AntdWrapper = (props: PropsWithChildren<any>) => {
+  // NOTE: antd 和 ahooks 都不太太兼容 react v19，需要降级到 react v18
   return (
     <ConfigProvider
       theme={{

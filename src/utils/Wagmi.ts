@@ -17,7 +17,7 @@ export class Wagmi {
   enable = true
 
   config = defaultWagmiConfig({
-    chains: [mainnet, sepolia],
+    chains: [sepolia],
     projectId: this.projectId,
     metadata: {
       name: 'Web3 Swap Demo', // TODO: add env

@@ -9,9 +9,6 @@ import { debugUtil } from './utils/DebugUtil'
 import { globalUtil } from './utils/global-util'
 import { walletControl } from './utils/WalletControl'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-
-const queryClient = new QueryClient()
-
 const App = () => {
   const { message, modal } = AntdApp.useApp()
   debugUtil.init()
@@ -33,12 +30,16 @@ const App = () => {
 }
 
 const WrapApp = () => {
+  const queryClient = new QueryClient()
+
   return (
-    <WagmiProvider config={walletControl.wagmi.config}>
-      <AntdWrapper>
-        <App />
-      </AntdWrapper>
-    </WagmiProvider>
+    <QueryClientProvider client={queryClient}>
+      <WagmiProvider config={walletControl.wagmi.config}>
+        <AntdWrapper>
+          <App />
+        </AntdWrapper>
+      </WagmiProvider>
+    </QueryClientProvider>
   )
 }
 

@@ -172,3 +172,17 @@ WalletConnect 是一个底层协议，而 Web3Modal (特别是 v2 版本) 是由
 - 事件相关：useAccountListener
 - 工具相关：useSwitchNetwork
 
+# 为什么不用指定网络 wagami 也可以知道
+
+Wagmi 使用你在配置中设置的默认网络，或者用户钱包当前连接的网络
+
+当你调用 useReadErc20Name 等 hooks 时，它们会在当前连接的网络上执行查询
+
+当然也可以显示指定
+
+```javascript
+const { data: name } = useReadErc20Name({
+  address: usdtAddress,
+  chainId: 1, // 1 = Ethereum mainnet
+})
+```

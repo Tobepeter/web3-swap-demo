@@ -37,6 +37,8 @@ jobs:
       - name: Build
         run: npm run build
 
+      # TODO: 使用 github 部署没办法使用 SPA 回退路由
+      #  必须一开始就要访问 /index.html
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:

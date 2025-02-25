@@ -54,8 +54,6 @@ export const routes: RouteConfig[] = [
 ]
 
 const baseUrl = import.meta.env.VITE_BASE_URL || '/'
-console.log('routes baseUrl', baseUrl)
-
 export const router = createBrowserRouter(routes, {
   basename: baseUrl,
 })

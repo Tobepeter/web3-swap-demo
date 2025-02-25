@@ -5,6 +5,7 @@ import { store } from '@/store/store'
 class LiquidityV2 {
   /* 添加流动性 */
   async addLiquidity(amount0: bigint, amount1: bigint) {
+    // TODO: 需要connect（ethers的类型）才能使用，可以参考 contract 上的单元测试
     const tx = await contract.swap.addLiquidity(amount0, amount1)
     const receipt = await tx.wait()
     return receipt

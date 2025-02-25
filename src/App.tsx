@@ -7,11 +7,13 @@ import { globalUtil } from './utils/global-util'
 import { store } from './store/store'
 import { isEmptyAddress } from './utils/common'
 import { historyServices } from './services/HistoryServices'
+import { debugUtil } from './utils/DebugUtil'
 
 const App = () => {
   // TODO: Warning: [antd: compatible] antd v5 support React is 16 ~ 18. see https://u.ant.design/v5-for-19 for compatible.
   //  react 19 兼容性不好，很多库都不支持，这里是 antd，还有 ahooks
   const { message, modal } = AntdApp.useApp()
+  debugUtil.init()
   globalUtil.injectAntd(message, modal)
   contract.init()
 

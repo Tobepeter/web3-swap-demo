@@ -27,7 +27,7 @@ class SwapControl {
    * @param token 输入代币类型
    * @returns 交易回执
    */
-  async swap(amountIn: bigint, amountOut: bigint, token: TokenType) {
+  async swap(amountIn: bigint, amountOut: bigint, token: TokenType, slippage: bigint) {
     const amount0In = token === TK_ERC20 ? amountIn : 0n
     const amount1In = token === TK_USDC ? amountIn : 0n
     const amount0Out = token === TK_USDC ? amountOut : 0n
@@ -37,7 +37,7 @@ class SwapControl {
       address: addressConfig.mockUniswapV2Pair as Address,
       abi: MockUniswapV2Pair__factory.abi,
       functionName: 'swap',
-      args: [amount0In, amount1In, amount0Out, amount1Out, store.getState().address],
+      args: [amount0In, amount1In, amount0Out, amount1Out, store.getState().address, slippage],
       account: store.getState().address,
       chain: contract.chain,
     })

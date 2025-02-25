@@ -16,7 +16,7 @@ describe('MockUSDC', function () {
 
   describe('部署', function () {
     it('应该设置正确的名称和符号', async function () {
-      expect(await mockUSDC.name()).to.equal('Mock USDC')
+      expect(await mockUSDC.name()).to.equal('MockUSDC Token')
       expect(await mockUSDC.symbol()).to.equal('MockUSDC')
     })
 

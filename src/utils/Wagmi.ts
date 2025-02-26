@@ -7,7 +7,7 @@ import Mitt from 'mitt'
 import { metaMask, walletConnect } from 'wagmi/connectors'
 
 export class Wagmi {
-  // https://cloud.reown.com/app/account
+  // @docs: https://cloud.reown.com/app/account
   projectId = import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID
   onConnect?: (address: string) => void
   onDisconnect?: () => void
@@ -15,6 +15,12 @@ export class Wagmi {
 
   enable = true
 
+  // TODO: 部署gitpages有固定error
+  //  Refused to frame 'https://secure.walletconnect.org/' because an ancestor violates the following Content Security Policy directive: "frame-ancestors 'self'
+  //  - Vercel (*.vercel.app)
+  //  - Cloudflare Pages (*.pages.dev)
+  //  - 或者使用 ngrok (*.ngrok-free.app)
+  //  或者，需要联系 WalletConnect 团队申请将你的域名添加到允许列表中
   config = defaultWagmiConfig({
     chains: [sepolia],
     projectId: this.projectId,

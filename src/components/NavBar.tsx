@@ -14,7 +14,6 @@ export const NavBar = () => {
   const location = useLocation()
   const wagmiAccount = useAccount()
 
-  // TODO: 增加自动连接功能
   const onClickWalletButton = async () => {
     if (walletControl.wagmi.enable) {
       walletControl.wagmi.open()
@@ -46,7 +45,7 @@ export const NavBar = () => {
     })
   }
 
-  // wagmi 的自动连接（TODO： 需要能监听到自动连接的行为才能加loading）
+  // wagmi 的自动连接（TODO：需要能监听到自动连接的行为才能加loading）
   useEffect(() => {
     if (wagmiAccount.isConnected) {
       store.setState({ address: wagmiAccount.address, isConnected: true })

@@ -30,6 +30,7 @@ const App = () => {
 }
 
 const WrapApp = () => {
+  // wagmi需要此对象
   const queryClient = new QueryClient()
 
   return (

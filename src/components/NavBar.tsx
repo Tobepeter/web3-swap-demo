@@ -5,11 +5,14 @@ import { walletControl } from '@/utils/WalletControl'
 import { Button, Menu } from 'antd'
 import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { Address } from 'viem'
+import { useAccount } from 'wagmi'
 
 export const NavBar = () => {
   const [isConnecting, setIsConnecting] = useState(false)
   const isConnected = store(state => state.isConnected)
   const location = useLocation()
+  const wagmiAccount = useAccount()
 
   // TODO: 增加自动连接功能
   const onClickWalletButton = async () => {
@@ -43,7 +46,22 @@ export const NavBar = () => {
     })
   }
 
+  // wagmi 的自动连接（TODO： 需要能监听到自动连接的行为才能加loading）
+  useEffect(() => {
+    if (wagmiAccount.isConnected) {
+      store.setState({ address: wagmiAccount.address, isConnected: true })
+      services.fetchBaseInfo()
+    } else {
+      store.setState({ address: '0x0' as Address, isConnected: false })
+    }
+  }, [wagmiAccount.isConnected])
+
+  // 旧版本metamask的自动连接
   const autoDetectWallet = async () => {
+    if (walletControl.wagmi.enable) {
+      return
+    }
+
     if (isConnected) return
     setIsConnecting(true)
     await services.autoDetectWallet().catch(() => {

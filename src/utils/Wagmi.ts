@@ -2,7 +2,6 @@ import { createWeb3Modal, defaultWagmiConfig, useWeb3Modal } from '@web3modal/wa
 import { mainnet, sepolia } from 'wagmi/chains'
 import { useAccount } from 'wagmi'
 import { useEffect } from 'react'
-import { store } from '@/store/store'
 import { Address } from 'viem'
 import Mitt from 'mitt'
 import { metaMask, walletConnect } from 'wagmi/connectors'
@@ -48,10 +47,8 @@ export class Wagmi {
 
     useEffect(() => {
       if (isConnected && address) {
-        store.setState({ address: address as Address, isConnected: true })
         this.mitt.emit(WagmiEvent.Connect, address)
       } else {
-        store.setState({ address: '0x0' as Address, isConnected: false })
         this.mitt.emit(WagmiEvent.Disconnect)
       }
     }, [address, isConnected])

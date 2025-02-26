@@ -154,7 +154,7 @@ class Services {
     }
   }
 
-  private async fetchBaseInfo() {
+  async fetchBaseInfo() {
     await this.fetchBalances()
     await this.fetchLiquidity()
     this.listenAccount()

@@ -22,8 +22,18 @@ class WalletControl {
       this.wagmi.open()
 
       const promise = new Promise<Address>((resolve, reject) => {
-        this.wagmi.mitt.on(WagmiEvent.Connect, resolve)
-        this.wagmi.mitt.on(WagmiEvent.Disconnect, reject)
+        const onConnect = (address: Address) => {
+          this.wagmi.mitt.off(WagmiEvent.Connect, onConnect)
+          resolve(address)
+        }
+
+        const onDisconnect = () => {
+          this.wagmi.mitt.off(WagmiEvent.Disconnect, onDisconnect)
+          reject()
+        }
+
+        this.wagmi.mitt.on(WagmiEvent.Connect, onConnect)
+        this.wagmi.mitt.on(WagmiEvent.Disconnect, onDisconnect)
       })
       return promise
     }

@@ -29,7 +29,8 @@
       return
     }
 
-    const queryPath = pathname.replace(`/${basePath}`, '')
+    const basePathPattern = new RegExp(`^/${basePath}/?`)
+    const queryPath = pathname.replace(basePathPattern, '')
     // 处理空路径，避免编码空字符串
     const pathToEncode = queryPath || '/'
     const encodedPath = encodeURIComponent(pathToEncode)

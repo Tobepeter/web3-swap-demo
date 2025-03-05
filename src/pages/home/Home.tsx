@@ -3,6 +3,7 @@ import { TokenTag } from '@/components/TokenTag'
 import { services } from '@/services/services'
 import { store } from '@/store/store'
 import { isEmptyAddress } from '@/utils/common'
+import { useGitPagesNav } from '@/utils/useGitPagesNav'
 import { CopyOutlined, PlusOutlined, SyncOutlined } from '@ant-design/icons'
 import { Button, InputNumber, Modal, Typography } from 'antd'
 import { useState } from 'react'
@@ -16,6 +17,8 @@ export const Home = () => {
   const [mintToken, setMintToken] = useState<TokenType>(null)
   const [amount, setAmount] = useState<number>(100)
   const [isLoading, setIsLoading] = useState(false)
+
+  useGitPagesNav()
 
   const handleOpenModal = (token: TokenType) => {
     setMintToken(token)

@@ -5,13 +5,8 @@ export const useGitPagesNav = () => {
   const { search } = useLocation()
   const navigate = useNavigate()
 
+  // TODO: 有一个很ugly的问题，就是如果一开始地址是 swap，会很短暂看到首页再跳转过去
   useEffect(() => {
-    // NOTE: localhost也需要方便测试
-    // const isGithubPages = window.location.origin.includes('github.io')
-    // if (!isGithubPages) {
-    //   return
-    // }
-
     const searchParams = new URLSearchParams(search)
     const path = searchParams.get('path')
 

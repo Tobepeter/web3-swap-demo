@@ -3,6 +3,7 @@ import { Home } from '@/pages/home/Home'
 import { Liquidity } from '@/pages/liquidity/Liquidity'
 import { Swap } from '@/pages/swap/Swap'
 import { History } from '@/pages/history/History'
+import { NotFound } from '@/pages/404/NotFound'
 import { createBrowserRouter } from 'react-router-dom'
 import { HomeOutlined, SwapOutlined, BankOutlined, HistoryOutlined } from '@ant-design/icons'
 
@@ -50,6 +51,10 @@ export const routes: RouteConfig[] = [
         icon: <HistoryOutlined />,
       },
     ],
+  },
+  {
+    path: '*',
+    element: <NotFound />,
   },
 ]
 

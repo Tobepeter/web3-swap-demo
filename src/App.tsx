@@ -9,6 +9,7 @@ import { debugUtil } from './utils/DebugUtil'
 import { globalUtil } from './utils/global-util'
 import { walletControl } from './utils/WalletControl'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+
 const App = () => {
   const { message, modal } = AntdApp.useApp()
   debugUtil.init()

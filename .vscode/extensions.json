@@ -3,6 +3,6 @@
     "esbenp.prettier-vscode", // prettier
     "dbaeumer.vscode-eslint", // eslint
     "bradlc.vscode-tailwindcss", // tailwindcss
-    "juanblanco.solidity" // solidity
+    "nomicfoundation.hardhat-solidity" // solidity
   ]
 }

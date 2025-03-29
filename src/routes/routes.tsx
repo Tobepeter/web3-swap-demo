@@ -5,7 +5,8 @@ import { Swap } from '@/pages/swap/Swap'
 import { History } from '@/pages/history/History'
 import { NotFound } from '@/pages/404/NotFound'
 import { createBrowserRouter } from 'react-router-dom'
-import { HomeOutlined, SwapOutlined, BankOutlined, HistoryOutlined } from '@ant-design/icons'
+import { HomeOutlined, SwapOutlined, BankOutlined, HistoryOutlined, ExperimentOutlined } from '@ant-design/icons'
+import { TestPage } from '@/pages/test/TestPage'
 
 type RouteConfig = {
   name?: string
@@ -20,6 +21,7 @@ export enum RoutePath {
   Swap = '/swap',
   Liquidity = '/liquidity',
   History = '/history',
+  Test = '/test',
 }
 
 export const routes: RouteConfig[] = [
@@ -49,6 +51,12 @@ export const routes: RouteConfig[] = [
         element: <History />,
         name: '历史',
         icon: <HistoryOutlined />,
+      },
+      {
+        path: RoutePath.Test,
+        element: <TestPage />,
+        name: '测试',
+        icon: <ExperimentOutlined />,
       },
     ],
   },

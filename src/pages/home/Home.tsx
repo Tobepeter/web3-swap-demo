@@ -1,4 +1,4 @@
-import { TestWagmi } from '@/components/TestWagmi'
+import { TestWagmi } from '@/components/test/wagmi/TestWagmi'
 import { TokenTag } from '@/components/TokenTag'
 import { services } from '@/services/services'
 import { store } from '@/store/store'
@@ -94,8 +94,6 @@ export const Home = () => {
           </div>
         </div>
       </div>
-
-      <TestWagmi />
 
       <Modal title={`添加${mintToken}代币（测试用）`} open={isModalOpen} onOk={onMint} onCancel={onMintCancel} confirmLoading={isLoading}>
         <div className="py-4">
